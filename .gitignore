@@ -8,3 +8,7 @@ source/sass/vendor
 source/svg/svgsprite.svg
 source/scripts/vendor
 node_modules
+source/scripts/exclude/react-dom.js
+source/scripts/exclude/react-dom.min.js
+source/scripts/exclude/react.js
+source/scripts/exclude/react.min.js

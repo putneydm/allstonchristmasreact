@@ -99,7 +99,7 @@ var paths = {
     output: 'source/content/'
   },
   html_partials : {
-    input: 'source/html_partials/**/*.html',
+    input: 'source/html_partials/**/*',
   },
   data: {
     input: 'source/data/**/*.*',
@@ -299,6 +299,7 @@ gulp.task('listen', function () {
     // css
       gulp.watch(paths.styles.watch).on('change', function(file) {
       gulp.start('css');
+      console.log('css');
     });
     // markdown
     gulp.watch(paths.markdown.input).on('change', function(file) {
