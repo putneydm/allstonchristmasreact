@@ -4,10 +4,14 @@
     @@include('../html_partials/common/head.html')
     <body>
         <!-- Add your site or application content here -->
-        <p>Hello world! This is HTML5 Boilerplate.</p>
-
+        <main class="main">
+          @@include('../html_partials/app.html')
+        </main>
     </body>
     @@include('../html_partials/common/js_links.html')
+
+    @@include('../html_partials/react/react.html')
+
     <script>
     (function() {
       "use strict";
