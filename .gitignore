@@ -1,0 +1,10 @@
+bower_components
+public
+test
+source/sass/neat
+source/sass/bourbon
+source/sass/base
+source/sass/vendor
+source/svg/svgsprite.svg
+source/scripts/vendor
+node_modules
