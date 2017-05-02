@@ -1,11 +1,11 @@
 <script>
 var TextAreaCounter = React.createClass ({
   propTypes: {
-    text: React.PropTypes.string,
+    defaultValue: React.PropTypes.string,
   },
   getInitialState: function() {
     return {
-      text: this.props.text,
+      text: this.props.defaultValue,
     };
   },
   _textChange: function(ev) {
@@ -19,15 +19,16 @@ var TextAreaCounter = React.createClass ({
         value: this.state.text,
         onChange: this._textChange,
       }),
-      React.DOM.h3(null,this.state.text.length)
+      React.DOM.h3(null,'Character count ' + this.state.text.length)
     );
   }
   });
 
-  ReactDOM.render(
+  var myTextAreaCounter = ReactDOM.render(
     React.createElement(TextAreaCounter, {
-      text: "Bob"
+      defaultValue: 'Bob',
     }),
     document.querySelector('#app')
-  )
-</script>
+  );
+
+// </script>
