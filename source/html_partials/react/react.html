@@ -1,16 +1,40 @@
 <script>
+
+var logMixin = {
+_log: function(methodName, args) {
+  console.log(this.name + ' :: ' + methodName, args);
+},
+componentWillUpdate: function() {
+  this._log('componentWillUpdate', arguments);
+},
+componentDidUpdate: function(oldProps, oldState) {
+  this._log('componentDidUpdate', arguments);
+},
+componentWillMount: function() {
+  this._log('componentWillMount', arguments);
+},
+componentDidMount: function() {
+  this._log('componentDidMount', arguments);
+},
+componentWillUnmount: function() {
+  this._log('componentWillUnmount', arguments);
+},
+};
+
 var TextAreaCounter = React.createClass ({
+  name: 'TextAreaCounter',
+  mixins: [logMixin],
   propTypes: {
-    defaultValue: React.PropTypes.string,
+    defaultValue: React.PropTypes.string, // adds a property of a string
   },
   getInitialState: function() {
     return {
-      text: this.props.defaultValue,
+      text: this.props.defaultValue, // this is the initial value we will compare stuff against
     };
   },
   _textChange: function(ev) {
     this.setState({
-      text: ev.target.value,
+      text: ev.target.value, // looks at the event and gets the value of the
     });
   },
   render: function() {
@@ -26,7 +50,7 @@ var TextAreaCounter = React.createClass ({
 
   var myTextAreaCounter = ReactDOM.render(
     React.createElement(TextAreaCounter, {
-      defaultValue: 'Bob',
+      defaultValue: 'Hello', // sets the value of the string
     }),
     document.querySelector('#app')
   );
