@@ -99,7 +99,7 @@ var paths = {
     output: 'source/content/'
   },
   html_partials : {
-    input: 'source/html_partials/**/*',
+    input: 'source/html_partials/**/*.html',
   },
   data: {
     input: 'source/data/**/*.*',
