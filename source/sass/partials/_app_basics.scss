@@ -34,6 +34,11 @@
   left:-1000000px;
 }
 .main {
-  width:rem(700);
+  width:rem(1200);
   margin:rem(80) auto;
+}
+
+tr td:first-child {
+  // border:1px solid red;
+  // width:400px !important;
 }
