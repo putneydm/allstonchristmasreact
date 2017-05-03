@@ -21,9 +21,24 @@ componentWillUnmount: function() {
 },
 };
 
-var TextAreaCounter = React.createClass ({
+let CounterComp = React.createClass({
+  name: 'Counter',
+  mixins: [React.addons.PureRenderMixin],
+  propTypes: {
+    count:React.PropTypes.number.isRequired,
+  },
+  // shouldComponentUpdate(nextProps, nextState_ignore) {
+  //   return nextProps.count !== this.props.count;
+  // },
+  render: function() {
+    console.log(this.name + ':: render()' );
+    return React.DOM.span(null, this.props.count);
+  }
+});
+
+let TextAreaCounter = React.createClass ({
   name: 'TextAreaCounter',
-  mixins: [logMixin],
+  // mixins: [logMixin],
   propTypes: {
     defaultValue: React.PropTypes.string, // adds a property of a string
   },
@@ -38,19 +53,27 @@ var TextAreaCounter = React.createClass ({
     });
   },
   render: function() {
+    console.log(this.name + ':: render()' );
+    let counter = null;
+    if (this.state.text.length > 0) {
+      counter = React.DOM.h3(null,React.createElement(CounterComp, {
+        count: this.state.text.length,
+      })
+    );
+    }
     return React.DOM.div(null,
       React.DOM.textarea({
         value: this.state.text,
         onChange: this._textChange,
       }),
-      React.DOM.h3(null,'Character count ' + this.state.text.length)
+      counter
     );
   }
   });
 
-  var myTextAreaCounter = ReactDOM.render(
+  let myTextAreaCounter = ReactDOM.render(
     React.createElement(TextAreaCounter, {
-      defaultValue: 'Hello', // sets the value of the string
+      defaultValue: 'bob', // sets the value of the string
     }),
     document.querySelector('#app')
   );
