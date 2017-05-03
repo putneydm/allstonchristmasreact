@@ -2,6 +2,7 @@
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^2.3.1",
+    "gulp-babel": "^6.1.2",
     "gulp-base64": "^0.1.2",
     "gulp-clean-css": "^2.0.12",
     "gulp-concat": "^2.4.1",
@@ -43,7 +44,7 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
-  "start": "gulp",
-  "postinstall": "bower install && gulp prebuild"
-}
+    "start": "gulp",
+    "postinstall": "bower install && gulp prebuild"
+  }
 }
