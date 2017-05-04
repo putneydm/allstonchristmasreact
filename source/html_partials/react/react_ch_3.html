@@ -25,6 +25,8 @@ let Excel = React.createClass({
       data: this.props.initialData,
       sortBy: null,
       descending: false,
+      edit: null,
+      search: false,
     };
   },
   _sort: function(e) {
@@ -32,10 +34,7 @@ let Excel = React.createClass({
     let data = Array.from(this.state.data);
     let descending = this.state.sortby === column && !this.state.descending;
 
-    console.log(descending);
-
     data.sort(function(a, b) {
-      // return a[column] > b[column] ? 1 : -1;
       return descending ? ( a[column] < b[column] ? 1 : -1) : (a[column] > b[column] ? 1 : -1)
     });
     this.setState({
@@ -44,7 +43,28 @@ let Excel = React.createClass({
       descending: descending,
     });
   },
+  _showEditor: function(e) {
+    this.setState({
+      edit: {
+        row:parseInt(e.target.dataset.row, 10),
+        cell: e.target.cellIndex,
+      }
+    }
+  );
+},
+  _save: function(e) {
+    e.preventDefault();
+    let data = this.state.data.slice();
+    let input = e.target.firstChild;
+    data[this.state.edit.row][this.state.edit.cell] = input.value;
+
+    this.setState({
+      edit: null,
+      data: data,
+    })
+  },
   render: function() {
+    let self=this;
     return (
       React.DOM.table(null,
         React.DOM.thead({onClick: this._sort},
@@ -57,13 +77,28 @@ let Excel = React.createClass({
             }, this)
           )
         ),
-        React.DOM.tbody(null,
-          this.state.data.map(function(row, i) {
+        React.DOM.tbody({onDoubleClick: this._showEditor},
+          this.state.data.map(function(row, rowi) {
             return (
-              React.DOM.tr({key: i},
-                row.map(function(cell, i) {
-                  return React.DOM.td({key: i}, cell);
-                })
+              React.DOM.tr({key: rowi},
+                row.map(function(content, celli) {
+
+                  // to do
+                  let edit = self.state.edit;
+                  if (edit && edit.row === rowi && edit.cell === celli) {
+                    content = React.DOM.form({
+                      onSubmit: self._save},
+                      React.DOM.input({
+                        type: 'text',
+                        defaultValue: content,
+                      })
+                    );
+                  }
+                  return React.DOM.td({
+                    key: celli,
+                    'data-row': rowi,
+                  }, content);
+                }, this)
               )
             );
           })
@@ -73,7 +108,7 @@ let Excel = React.createClass({
   }
 });
 
-ReactDOM.render(
+let renderFoo = ReactDOM.render(
   React.createElement(Excel, {
     headers: headers,
     initialData: data,
