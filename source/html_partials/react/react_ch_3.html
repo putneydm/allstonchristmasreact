@@ -30,11 +30,18 @@ let Excel = React.createClass({
   _sort: function(e) {
     let column = e.target.cellIndex;
     let data = Array.from(this.state.data);
+    let descending = this.state.sortby === column && !this.state.descending;
+
+    console.log(descending);
+
     data.sort(function(a, b) {
-      return a[column] > b[column] ? 1 : -1;
+      // return a[column] > b[column] ? 1 : -1;
+      return descending ? ( a[column] < b[column] ? 1 : -1) : (a[column] > b[column] ? 1 : -1)
     });
     this.setState({
       data:data,
+      sortby: column,
+      descending: descending,
     });
   },
   render: function() {
@@ -43,8 +50,11 @@ let Excel = React.createClass({
         React.DOM.thead({onClick: this._sort},
           React.DOM.tr(null,
             this.props.headers.map(function(el, i) {
+              if (this.state.sortby === i) {
+                el += this.state.descending ? ' \u2191' : ' \u2193'
+              }
               return React.DOM.th({key: i}, el);
-            })
+            }, this)
           )
         ),
         React.DOM.tbody(null,
