@@ -22,6 +22,63 @@ let Excel = React.createClass({
     _presearchdata: React.PropTypes.arrayOf(
       React.PropTypes.arrayOf(React.PropTypes.string)
     ),
+    searchdata: React.PropTypes.arrayOf(
+      React.PropTypes.arrayOf(React.PropTypes.string)
+    ),
+  },
+  _log: [],
+  _logSetState: function(newState) {
+    // remember the old state in a clone
+
+    console.log('newState', newState);
+
+    this._log.push(JSON.parse(JSON.stringify(
+      this._log.length === 0 ? this.state : newState
+    )));
+    this.setState(newState);
+  },
+  componentDidMount: function() {
+    document.onkeydown = function(e) {
+      if (e.altKey && e.shiftKey && e.keyCode === 82) {
+        this._replay('all');
+      }
+      if (e.altKey && e.keyCode === 90) {
+        this._replay('undo');
+        e.preventDefault();
+      }
+    }.bind(this);
+    // document.onkeydown = function(e) {
+    //   if (e.altKey && e.keyCode === 90) {
+    //     this._replay('undo');
+    //     e.preventDefault();
+    //   }
+    // }.bind(this);
+  },
+  _replay: function(type) {
+
+    console.log('replay');
+
+    if (this._log.length === 0) {
+      console.warn('no state to replay yet');
+      return;
+    }
+    var idx = -1;
+    console.log('log length', this._log);
+    console.log(this._log[(this._log.length - 1)]);
+    console.log(this._log[(this._log.length - 1) -1]);
+
+
+    this.setState(this._log[(this._log.length - 1) -2]);
+
+    if (type === 'all') {
+      var interval = setInterval(function() {
+        idx++;
+        if (idx === this._log.length - 1) {
+          clearInterval(interval);
+        }
+        this.setState(this._log[idx]);
+      }.bind(this), 1000);
+    }
   },
   getInitialState: function() {
     return {
@@ -31,24 +88,27 @@ let Excel = React.createClass({
       edit: null,
       search: false,
       _presearchdata: null,
+      searchdata: null,
+      needle: null,
+      buttonState: true,
+      searchFields: null,
     };
   },
   _sort: function(e) {
     let column = e.target.cellIndex;
-    let data = Array.from(this.state.data);
     let descending = this.state.sortby === column && !this.state.descending;
 
     data.sort(function(a, b) {
       return descending ? ( a[column] < b[column] ? 1 : -1) : (a[column] > b[column] ? 1 : -1)
     });
-    this.setState({
+    this._logSetState({
       data:data,
       sortby: column,
       descending: descending,
     });
   },
   _showEditor: function(e) {
-    this.setState({
+    this._logSetState({
       edit: {
         row:parseInt(e.target.dataset.row, 10),
         cell: e.target.cellIndex,
@@ -61,7 +121,7 @@ let Excel = React.createClass({
     let input = e.target.firstChild;
     data[this.state.edit.row][this.state.edit.cell] = input.value;
 
-    this.setState({
+    this._logSetState({
       edit: null,
       data: data,
     })
@@ -111,63 +171,101 @@ let Excel = React.createClass({
     );
   },
   _renderToolbar: function() {
+    console.log();
     return React.DOM.button({
       onClick: this._toggleSearch,
       className: 'toolbar',
     },
-      'Search'
-    );
+      !this.state.search ? "Show Search" : "Hide Search"
+    )
+  },
+  _renderClear: function() {
+    // let buttonState = true;
+    return React.DOM.button({
+      onClick: this._renderSearch,
+      className: 'toolbar',
+      disabled: this.state.buttonState,
+    }, "Clear"
+    )
+  },
+  _toggleClear: function(e) {
+    if (this.state.search && e.target.value.length > 0) {
+        this._logSetState({
+          // buttonState:false,
+        })
+    } else {
+        this._logSetState({
+          // buttonState:true,
+        })
+    }
   },
   _renderSearch: function() {
+    console.log('render search');
+
+    var dataFoo = [];
+
     if (!this.state.search) {
       return null;
     }
     return (
       React.DOM.tr({
-        onChange: this._search
+        onChange: (e) => {
+          this._search(e);
+          this._toggleClear(e);
+        }
       },
         this.props.headers.map(function(_ignore, idx) {
+          dataFoo.idx = null;
           return React.DOM.td({key:idx},
             React.DOM.input({
               type:'text',
               'data-idx': idx,
+              className:'searchField',
+              value: dataFoo.idx,
             })
           );
         })
       )
     );
+    this._logSetState({
+      searchFields:dataFoo
+    })
   },
   _toggleSearch: function() {
     if (this.state.search) {
-      this.setState({
+      this._logSetState({
         data: this._presearchdata,
         search: false,
       });
       this._presearchdata = null;
     } else {
       this._presearchdata = this.state.data;
-      this.setState ({
+      this._logSetState ({
         search:true,
       });
     }
   },
   _search: function(e) {
+    console.log('search', e.target);
     let needle = e.target.value.toLowerCase();
-    console.log('needle', needle);
     if (!needle) {
-      this.setState({data: this._presearchdata});
+      this._logSetState({data: this._presearchdata});
       return;
     }
-    var idx = e.target.dataset.idx;
-    var searchdata = this._presearchdata.filter(function(row) {
+    let idx = e.target.dataset.idx;
+    let searchdata = this._presearchdata.filter(function(row) {
       return row[idx].toString().toLowerCase().indexOf(needle) > -1;
     });
-    this.setState({data: searchdata});
+    this._logSetState({
+      data: searchdata,
+      needle: needle,
+    });
   },
   render: function() {
     return (
       React.DOM.div(null,
         this._renderToolbar(),
+        this._renderClear(),
         this._renderTable()
       )
     );

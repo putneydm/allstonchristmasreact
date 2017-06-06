@@ -7,7 +7,8 @@ var gulp = require('gulp'),
 var concat = require('gulp-concat'),
     minifyJS = require('gulp-uglify'),
     jshint = require('gulp-jshint'),
-    babel = require("gulp-babel");
+    babel = require("gulp-babel"),
+    eslint = require('gulp-eslint');
 
 //css
 var sass = require('gulp-sass'),
@@ -61,10 +62,9 @@ var paths = {
     dist : 'public/'
   },
   scripts : {
-    input : 'source/scripts/*.js',
+    input : 'source/scripts/to_concat/**/*.js',
     exclude : 'source/scripts/exclude/*.js',
-    bower : 'bower_components/**/*.js',
-    vendor : 'source/scripts/vendor/*.js',
+    vendor : 'source/scripts/to_concat/vendor/*.js',
     testing : 'test/scripts/',
     dist : 'public/scripts/'
   },
@@ -140,8 +140,12 @@ gulp.task('templates', function() {
 });
 // concatenates scripts, but not items in exclude folder. includes vendor folder
 gulp.task('concat', function() {
-  gulp.src([paths.scripts.vendor, paths.scripts.input,'!' + paths.scripts.exclude, '!' + paths.scripts.bower])
-   .pipe(babel())
+  gulp.src([paths.scripts.input])
+    .pipe(babel(
+      {
+			presets: ['env', 'react']
+		}
+    ))
    .pipe(concat('main.js'))
    .pipe(gulp.dest(paths.scripts.testing))
    .pipe(minifyJS())
@@ -149,16 +153,59 @@ gulp.task('concat', function() {
 });
 gulp.task('exclude', function() {
   gulp.src(paths.scripts.exclude)
+    .pipe(babel(
+      {
+      presets: ['env', 'react']
+    }
+    ))
    .pipe(gulp.dest(paths.scripts.testing))
    .pipe(minifyJS())
    .pipe(gulp.dest(paths.scripts.dist));
 });
 // lints main javascript file for site
 gulp.task('lint', function() {
-  return gulp.src('source/scripts/functions.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter(stylish))
-    .pipe(jshint.reporter('fail'));
+  return gulp.src(paths.scripts.input)
+    .pipe(eslint(
+      {
+        "parser": "babel-eslint",
+        rules: {
+      				'no-alert': 0,
+      				'no-bitwise': 0,
+      				'camelcase': 1,
+      				'curly': 1,
+      				'eqeqeq': 0,
+      				'no-eq-null': 0,
+      				'guard-for-in': 1,
+      				'no-empty': 1,
+      				'no-use-before-define': 1,
+      				'no-obj-calls': 2,
+      				'no-unused-vars': 1,
+      				'new-cap': 1,
+      				'no-shadow': 0,
+      				'strict': 1,
+      				'no-invalid-regexp': 2,
+      				'comma-dangle': 2,
+      				'no-undef': 1,
+      				'no-new': 1,
+      				'no-extra-semi': 1,
+      				'no-debugger': 2,
+      				'no-caller': 1,
+      				'semi': 1,
+      				'quotes': 1,
+      				'no-unreachable': 2,
+              'jsx-quotes': 1
+      			},
+        envs: [
+          'browser', 'es6', 'react'
+        ],
+        plugins: ["react"],
+        extends: {
+          eslint: "recommended"
+        }
+    }
+    ))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 // lints and minifies css, moves to testing and dist
 gulp.task('css', function() {
@@ -295,18 +342,16 @@ gulp.task('listen', function () {
     });
     // scripts
       gulp.watch(paths.scripts.input).on('change', function(file) {
-      gulp.start('lint');
-      gulp.start('concat');
+      gulp.start(['lint', 'concat']);
     });
     // css
       gulp.watch(paths.styles.watch).on('change', function(file) {
       gulp.start('css');
-      console.log('css');
     });
     // markdown
     gulp.watch(paths.markdown.input).on('change', function(file) {
-      gulp.start('markdown');
-      gulp.start('templates');
+      gulp.start(['markdown','templates']);
+      // gulp.start('templates');
     });
     gulp.watch(paths.html_partials.input).on('change', function(file) {
       gulp.start('templates');
