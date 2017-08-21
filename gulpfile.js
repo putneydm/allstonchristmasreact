@@ -8,7 +8,8 @@ var concat = require('gulp-concat'),
     minifyJS = require('gulp-uglify'),
     jshint = require('gulp-jshint'),
     babel = require("gulp-babel"),
-    eslint = require('gulp-eslint');
+    eslint = require('gulp-eslint'),
+    babelify = require('babelify');
 
 //css
 var sass = require('gulp-sass'),
@@ -151,6 +152,7 @@ gulp.task('concat', function() {
    .pipe(minifyJS())
    .pipe(gulp.dest(paths.scripts.dist));
 });
+
 gulp.task('exclude', function() {
   gulp.src(paths.scripts.exclude)
     .pipe(babel(
