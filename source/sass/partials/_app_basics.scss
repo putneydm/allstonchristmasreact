@@ -45,3 +45,10 @@ tr td:first-child {
 .toolbar {
   margin-right:30px;
 }
+form {
+  max-width:450px;
+  margin:0 auto;
+}
+input[type=color], input[type=text] {
+  height:50px;
+}
