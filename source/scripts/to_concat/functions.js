@@ -1,150 +1,110 @@
-  (function() {
-    // "use strict"; // use strict test yy
-
-    let headers = ["Book", "Author", "Language", "Published", "Sales"];
-    let data = [
-      ["The Lord of the Rings", "J. R. R. Tolkien", "English", "1954-1955", "150 million"],
-      ["Le Petit Prince (The Little Prince)", "Antoine de Saint-Exupéry", "French", "1943", "140 million"],
-      ["Harry Potter and the Philosopher's Stone", "J. K. Rowling", "English", "1997", "107 million"],
-      ["And Then There Were None", "Agatha Christie", "English", "1939", "100 million"],
-      ["Dream of the Red Chamber", "Cao Xueqin", "Chinese", "1754-1791", "100 million"],
-      ["The Hobbit", "J. R. R. Tolkien", "English", "1937", "100 million"],
-      ["She: A History of Adventure", "H. Rider Haggard", "English", "1887", "100 million"]
-    ];
-
-    let foo = "bar";
-
-    var Excel = class extends React.Component {
-
-      constructor() {
-        super();
-        this.state = {
-          headers: headers,
-          initialData: data,
-          buttonState: false,
-          value: 2
-        }
-      }
-
-      // _sort () {
-      //
-      //   console.log('sort');
-      //
-      // }
-      //
-      // _searchBox() {
-      //   return <div>
-      //     <form>
-      //       <input type="text" />{foo}
-      //       <input type="button" value="Search" disabled />
-      //     </form>
-      //   </div>
-      // }
-
-      // TableCell(title, idx) {
-      //     let cell = <td key={idx}>{title}</td>
-      //     return cell;
-      // }
-      // TableHead(title, idx) {
-      //     let cell = <th key={idx}>{title}</th>
-      //     return cell;
-      // }
-      // TableHeader() {
-      //   let header = this.props.headers.map( (title, idx) => {
-      //     return this.TableHead(title, idx);
-      //   });
-      //   return header
-      // }
-      //
-      // TableRow(el, i) {
-      //   let row = <tr key={i}>
-      //   {el.map( (val, idx) => {
-      //       return this.TableCell(val, idx)
-      //     })
-      //   }
-      //   </tr>
-      //   return row;
-      // }
-      //
-      // TableBody() {
-      //   let body = this.props.initialData.map( (el, i) => {
-      //     return this.TableRow(el, i);
-      //   });
-      //   return body;
-      // }
+const app = document.querySelector("#app");
 
 
-      render() {
-          return (
-          <div>
-          {this.props.headers.map((el, i) => <TableHeader value={el} />
-          )}
-          </div>
-        )
-      }
-    }
+const data = [
+  {
+    name: "Baked Salmon",
+    ingredients: [
+      { name: "Salmon", amount: 1, measurment: "l lb" },
+      { name: "Pine Nuts", amount: 1, measurment: "cup" },
+      { name: "Butter Lettuce", amount: 2, measurment: "cups" },
+      { name: "Yellow Squash", amount: 1, measurment: "med" },
+      { name: "Olive Oil", amount: 0.5, measurment: "cup" },
+      { name: "Garlic", amount: 3, measurment: "cloves" },
+    ],
+    steps: [
+      "Preheat the oven to 350 degrees.",
+      "Spread the olive oil around a glass baking dish.",
+      "Add the salmon, garlic, and pine nuts to the dish.",
+      "Bake for 15 minutes.",
+      "Add the yellow squash and put back in the oven for 30 mins.",
+      "Remove from oven and let cool for 15 minutes. Add the lettuce and serve.",
+    ] },
+  {
+    name: "Fish Tacos",
+    ingredients: [
+      { name: "Whitefish", amount: 1, measurment: "l lb" },
+      { name: "Cheese", amount: 1, measurment: "cup" },
+      { name: "Iceberg Lettuce", amount: 2, measurment: "cups" },
+      { name: "Tomatoes", amount: 2, measurment: "large" },
+      { name: "Tortillas", amount: 3, measurment: "med" },
+    ],
+    steps: [
+      "Cook the fish on the grill until hot.",
+      "Place the fish on the 3 tortillas.",
+      "Top them with lettuce, tomatoes, and cheese.",
+    ],
+  },
+];
 
-    var TableHeader = class extends React.Component {
-        render() {
-          console.log(this.props.value);
-          return (
-            <div>
-              {this.props.value}
-            </div>
-          )
-        }
-    }
-
-    ReactDOM.render(
-      React.createElement(Excel, {
-        headers: headers,
-        initialData: data,
-        initialSearch: null
-      }),
-      document.querySelector("#app")
-    );
 
 
-  })();
 
-class Clock extends React.Component {
+const Instructions = ({ title, steps }) =>
+<section className="instructions">
+  <h2>{title}</h2>
+  {steps.map((step, i) =>
+    <p key={i}>{step}</p>
+  )}
+</section>
 
-  constructor(props) {
-      super(props);
-      this.state = {date: new Date()};
-    }
+const Ingredient = ({amount, measurment, name}) =>
+  <li>
+    <span className="amount">{amount} </span>
+    <span className="measurment">{measurment} </span>
+    <span className="name">{name}</span>
+  </li>
 
-  tick() {
-    this.setState({
-      date: new Date()
-    });
-  }
+const IngredientsList = ({ list }) =>
+  <ul className="ingredients">
+    {list.map((ingredient, i) =>
+      <Ingredient key={i} {...ingredient} />
+  )}
+  </ul>
 
-  componentDidMount() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      1000
-    );
-  }
+const Recipe = ({ name, ingredients, steps }) =>
+  <section id={name.toLowerCase().replace(/ /g, "-")}>
+    <h1>{name}</h1>
+    <IngredientsList list={ingredients} />
+    <Instructions title="Cooking Instructions" steps={steps} />
+</section>
 
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
+const Menu = ({title, recipes}) =>
+  <article>
+    <header>
+      <h1>{title}</h1>
+    </header>
+    <div className="recipes"> {
+      recipes.map((recipe, i) =>
+        <Recipe key={i} {...recipe} />
+    )}
+    </div>
+  </article>
 
-  render() {
-    return (
-      <div>
-        <h1>Hello, world!</h1>
-        <h2>It is {new Date().toLocaleTimeString()}.</h2>
-      </div>
-    )
-  }
-}
 
-// ReactDOM.render(
-//   <Clock />,
-//   document.getElementById('app')
+ReactDOM.render(
+  <Menu recipes={data} title="Delicious Recipes" />, app
+)
+
+// const items = [
+//   "1 lb Salmon",
+//   "1 cup Pine Nuts",
+//   "2 cups Butter Lettuce",
+//   "1 Yellow Squash",
+//   "1/2 cup Olive Oil",
+//   "3 cloves of Garlic",
+// ];
+
+
+// const ingredientsList = ({items}) =>
+//   React.createElement("ul", { className: "ingredients" },
+//     items.map((ingredient, i) =>
+//       React.createElement("li", { key: i }, ingredient)
+//   )
 // );
-// }
-
-// setInterval(tick, 1000);
+//
+// const ingredients = React.createFactory(ingredientsList);
+//
+//
+// ReactDOM.render(
+//   ingredients({ items }), app);
