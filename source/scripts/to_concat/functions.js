@@ -62,9 +62,28 @@ const IngredientsList = ({ list }) =>
   )}
   </ul>
 
+const Summary = ({ list, listToo, title })  => {
+  return <div>
+    <h2>{title}</h2>
+    <p className="summary">{list} Ingredients | {listToo} Steps</p>
+  </div>
+}
+
+  Summary.propTypes = {
+    list: React.PropTypes.number,
+    listToo: React.PropTypes.number,
+    title: React.PropTypes.string,
+  }
+  Summary.defaultProps = {
+    list:26,
+    listToo:34,
+    title: "[title here]"
+  }
+
 const Recipe = ({ name, ingredients, steps }) =>
   <section id={name.toLowerCase().replace(/ /g, "-")}>
     <h1>{name}</h1>
+    <Summary list={ingredients.length} listToo={steps.length} title="thing" />
     <IngredientsList list={ingredients} />
     <Instructions title="Cooking Instructions" steps={steps} />
 </section>
@@ -81,6 +100,20 @@ const Menu = ({title, recipes}) =>
     </div>
   </article>
 
+  // const Summary = ({ ingredients, steps, title }) => {
+  //   return <div>
+  //     <h1>{title}</h1>
+  //     <p>{list} Ingredients | {els} Steps</p>
+  //   </div>
+  // }
+  //   Summary.propTypes = {
+  //     ingredients: React.PropTypes.number.isrequired,
+  //     steps: React.PropTypes.number.isrequired,
+  //   }
+  //   Summary.defaultProps = {
+  //     ingredients: 1,
+  //     steps: 1,
+  //  }
 
 ReactDOM.render(
   <Menu recipes={data} title="Delicious Recipes" />, app
