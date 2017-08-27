@@ -1,3 +1,10 @@
+// babel = require('gulp-babel'),
+    // browserify = require('browserify'),
+    // source = require('vinyl-source-stream'),
+var buffer = require('vinyl-buffer'),
+    // rename = require('gulp-rename'),
+    uglify = require('gulp-uglify'),
+    del = require('del');
 
 var gulp = require('gulp'),
     browserify = require('browserify'),
@@ -66,6 +73,7 @@ var paths = {
     input : 'source/scripts/to_concat/**/*.js',
     exclude : 'source/scripts/exclude/*.js',
     vendor : 'source/scripts/to_concat/vendor/*.js',
+    temp : 'test/scripts/temp',
     testing : 'test/scripts/',
     dist : 'public/scripts/'
   },
@@ -140,18 +148,50 @@ gulp.task('templates', function() {
    .pipe(gulp.dest(paths.pageTemplates.dist));
 });
 // concatenates scripts, but not items in exclude folder. includes vendor folder
-gulp.task('concat', function() {
+// gulp.task('concat', function() {
+//   gulp.src([paths.scripts.input])
+//     .pipe(babel(
+//       {
+// 			presets: ['env', 'react']
+// 		}
+//     ))
+//    .pipe(concat('main.js'))
+//    .pipe(gulp.dest(paths.scripts.testing))
+//    .pipe(minifyJS())
+//    .pipe(gulp.dest(paths.scripts.dist));
+// });
+
+// cleans out temp file in test
+gulp.task('clean-temp', function(){
+  return del([paths.scripts.temp + "/*.js"]);
+});
+
+gulp.task('js', ['clean-temp'], function() {
   gulp.src([paths.scripts.input])
     .pipe(babel(
       {
 			presets: ['env', 'react']
 		}
     ))
-   .pipe(concat('main.js'))
-   .pipe(gulp.dest(paths.scripts.testing))
-   .pipe(minifyJS())
-   .pipe(gulp.dest(paths.scripts.dist));
+    .pipe(gulp.dest(paths.scripts.temp));
+
+  //  .pipe(concat('main.js'))
+  //  .pipe(gulp.dest(paths.scripts.testing))
+  //  .pipe(minifyJS())
+  //  .pipe(gulp.dest(paths.scripts.dist));
 });
+
+gulp.task('bundle', ['js'], function(){
+  return browserify([paths.scripts.temp + '/functions.js']).bundle()
+    .pipe(source('main.js'))
+    .pipe(buffer())
+    // .pipe(uglify())
+    .pipe(rename('main.js'))
+    .pipe(gulp.dest(paths.scripts.testing))
+    .pipe(minifyJS())
+    .pipe(gulp.dest(paths.scripts.dist));
+});
+
 
 gulp.task('exclude', function() {
   gulp.src(paths.scripts.exclude)
@@ -289,7 +329,7 @@ gulp.task('webserver', function() {
     .pipe(webserver({
       livereload: true,
       directoryListing: false,
-      open: true
+      // open: true
     }));
 });
 // creates blog images in four sizes, minifies, moves to testing and dist
@@ -344,7 +384,7 @@ gulp.task('listen', function () {
     });
     // scripts
       gulp.watch(paths.scripts.input).on('change', function(file) {
-      gulp.start(['lint', 'concat']);
+      gulp.start(['lint', 'bundle']);
     });
     // css
       gulp.watch(paths.styles.watch).on('change', function(file) {
@@ -381,7 +421,8 @@ gulp.task('default', [
 	'bower',
   'lint',
   'siteart',
-  'concat',
+  // 'concat',
+  'bundle',
   'markdown',
   'exclude',
   'listen',
