@@ -71,27 +71,35 @@ input[type=color], input[type=text] {
   margin: 2px;
   display:inline-block;
   // float: left;
+  transition: background-color .2s;
   background-color: grey;
   clip-path: polygon( 50% 0%, 63% 38%, 100% 38%, 69% 59%, 82% 100%, 50% 75%, 18% 100%, 31% 59%, 0% 38%, 37% 38% );
 }
 .star.selected {
   background-color:red;
+  transition: background-color .2s;
 }
 .color-list {
   display: flex;
   flex-wrap: wrap;
   max-width:1000px;
   margin:40px auto 0;
-
 }
 section.color {
   flex-basis: 18%;
   flex-grow: 0;
   margin:1%;
+  position: relative;
 }
 div.color {
   padding-top: 100%;
 }
 form {
-  border:1px solid red;
+  // border:1px solid red;
+}
+button.close {
+  position: absolute;
+  right:0;
+  background-color: transparent;
+  padding:10px;
 }
