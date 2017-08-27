@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .one-column {
   width:100%;
 }
@@ -51,4 +55,43 @@ form {
 }
 input[type=color], input[type=text] {
   height:50px;
+}
+.star-rating {
+  width:100%;
+  text-align: center;
+  padding:8px 0 0;
+}
+.star-text {
+  width:100%;
+}
+.star {
+  cursor: pointer;
+  height: 25px;
+  width: 25px;
+  margin: 2px;
+  display:inline-block;
+  // float: left;
+  background-color: grey;
+  clip-path: polygon( 50% 0%, 63% 38%, 100% 38%, 69% 59%, 82% 100%, 50% 75%, 18% 100%, 31% 59%, 0% 38%, 37% 38% );
+}
+.star.selected {
+  background-color:red;
+}
+.color-list {
+  display: flex;
+  flex-wrap: wrap;
+  max-width:1000px;
+  margin:40px auto 0;
+
+}
+section.color {
+  flex-basis: 18%;
+  flex-grow: 0;
+  margin:1%;
+}
+div.color {
+  padding-top: 100%;
+}
+form {
+  border:1px solid red;
 }
