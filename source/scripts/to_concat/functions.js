@@ -1,43 +1,37 @@
 // import AddColorForm from "./modules/addForm"
-import { v4 } from '../../../node_modules/uuid'
-
+import { v4 } from "../../../node_modules/uuid";
 const app = document.querySelector("#app");
 
-  let colors = [
-    {
-      "id": "0175d1f0-a8c6-41bf-8d02-df5734d829a4",
-      "title": "ocean at dusk",
-      "color": "#00c4e2",
-      "rating": 5,
-    },
-    {
-      "id": "83c7ba2f-7392-4d7d-9e23-35adbe186046",
-      "title": "lawn",
-      "color": "#26ac56",
-      "rating": 3,
-    },
-    {
-      "id": "a11e3995-b0bd-4d58-8c48-5e49ae7f7f23",
-      "title": "bright red",
-      "color": "#ff0000",
-      "rating": 0,
-    }
-  ]
+const colors = [
+  {
+    id: "0175d1f0-a8c6-41bf-8d02-df5734d829a4",
+    title: "ocean at dusk",
+    color: "#00c4e2",
+    rating: 5,
+  },
+  {
+    id: "83c7ba2f-7392-4d7d-9e23-35adbe186046",
+    title: "lawn",
+    color: "#26ac56",
+    rating: 3,
+  },
+  {
+    id: "a11e3995-b0bd-4d58-8c48-5e49ae7f7f23",
+    title: "bright red",
+    color: "#ff0000",
+    rating: 0,
+  },
+];
 
-const Star = ({ selected = false, starClick=f=>f }) => {
-  console.log('foo', starClick);
-  return (
-  <div className = {(selected) ? "star selected" : "star" }
-  onClick={starClick}>
-  </div>
-  )
-}
-  Star.propTypes = {
-    selected: React.PropTypes.bool,
-    starClick: React.PropTypes.func
-}
+const Star = ({ selected = false, starClick = f => f }) =>
+  <div className={(selected) ? "star selected" : "star"} onClick={starClick} />
 
-const StarRating = ({starsSelected=0, totalStars=5, onRate=f=>f}) =>
+Star.propTypes= {
+  selected: React.PropTypes.bool,
+  starClick: React.PropTypes.func,
+};
+
+const StarRating = ({ starsSelected=0, totalStars=5, onRate=f => f }) =>
 <div className="star-rating">
    {[...Array(totalStars)].map((n, i) =>
    <Star key={i}
@@ -48,7 +42,12 @@ const StarRating = ({starsSelected=0, totalStars=5, onRate=f=>f}) =>
  <p className="star-text"> {starsSelected} of {totalStars}</p>
  </div>
 
-const ColorList = ({colors=[], onRemove=f=>f, onRate=f=>f}) => {
+ StarRating.propTypes= {
+   starsSelected: React.PropTypes.number,
+   totalStars: React.PropTypes.number,
+ };
+
+const ColorList = ({colors=[], onRemove=f => f, onRate=f => f}) => {
 return (
     <div className="color-list">
   { (colors.length === 0) ?
@@ -65,7 +64,6 @@ return (
 </div>
 )
 }
-
 
 const ColorIndv = ({title, color, rating=0, onRemove=f=>f, onRate=f=>f}) => {
 return (
