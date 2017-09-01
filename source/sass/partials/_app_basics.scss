@@ -103,3 +103,41 @@ button.close {
   background-color: transparent;
   padding:10px;
 }
+.notes-app {
+  display: flex
+}
+.note {
+  border:1px solid red;
+  flex-basis: 23%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin:10px 1%;
+  padding:12px;
+}
+label {
+
+}
+input[type=checkbox] {
+  border:3px solid red;
+  position: absolute;
+  left:-10000px;
+}
+input[type=checkbox] + label {
+  font-weight: normal;
+  &::before {
+    content: "";
+    display: inline-block;
+    border:1px solid red;
+    width:14px;
+    height:14px;
+    vertical-align: -2px;
+    margin: 0 8px 0 0;
+  }
+}
+input[type=checkbox]:checked + label {
+  font-weight: normal;
+  &::before {
+    content: "";
+    background-color: red;
+  }
+}
