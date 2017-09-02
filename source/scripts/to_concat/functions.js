@@ -21,6 +21,8 @@ const notesCont = [
   }
 ]
 
+const notesEdits = [];
+
 const Text = ({noteText=""}) =>
 <p className="foobar">{noteText}</p>
 
@@ -37,10 +39,7 @@ const Assigned = ({text=""}) =>
 
 const Checkbox = ({checked="false", checkChange, id}) => {
   let _checkbox
-  const submit = e => {
-    // e.preventDefault();
-    checkChange(id)
-  }
+  const submit = e => checkChange(id);
   return (
     <form>
     <input
@@ -55,51 +54,84 @@ const Checkbox = ({checked="false", checkChange, id}) => {
     </form>
   )
 }
-  Checkbox.PropTypes = {
-    checked: React.PropTypes.bool,
-    checkChange: React.PropTypes.func,
-    id:React.PropTypes.string,
-  }
+Checkbox.PropTypes = {
+  checked: React.PropTypes.bool,
+  checkChange: React.PropTypes.func,
+  id:React.PropTypes.string,
+}
 
-const Note = ({singleNote, checkChange, index}) => {
+const TextField = ({noteInput, id}) => {
+  let _textArea;
+  const submit = e => {
+    e.preventDefault();
+    noteInput(_textArea.value, id);
+    _textArea.value = "";
+  }
+  return (
+    <form onSubmit={submit}>
+      <textarea
+        className="more-space-below"
+        placeholder="Enter a note ..."
+        ref={input => _textArea = input}
+      >
+      </textarea>
+      <button className="more-space-below" type="submit">Submit</button>
+    </form>
+  )
+}
+TextField.PropTypes = {
+  noteInput: React.PropTypes.func,
+  id: React.PropTypes.number,
+}
+
+const Note = ({singleNote, checkChange, noteInput}) => {
   return (
     <article className="note">
       <Text noteText={singleNote.text} />
-      <Checkbox checked={singleNote.done} id={singleNote.id}
-        checkChange={checkChange} id={index}
-        />
+      <TextField noteInput={noteInput} id={singleNote.id}/>
+      <Checkbox
+        checked={singleNote.done}
+        id={singleNote.id}
+        checkChange={checkChange}
+      />
       <Assigned text={singleNote.assigned} />
     </article>
   )
 }
-
-  Note.PropTypes = {
-    singleNote: React.PropTypes.object,
-    checkChange: React.PropTypes.func,
-  }
+Note.PropTypes = {
+  singleNote: React.PropTypes.object,
+  checkChange: React.PropTypes.func,
+  index: React.PropTypes.string
+}
 
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {notesCont}
+    this.state = {notesCont, notesEdits}
     this.handleCheck = this.handleCheck.bind(this);
+    this.handleNoteText = this.handleNoteText.bind(this);
   }
   handleCheck(id) {
-    let notes = this.state;
-    notes.notesCont.map((note, i) => {
-      notes.notesCont[id].done = (notes.notesCont[id].id === note.id) ? !notes.notesCont[id].done : notes.notesCont[id].done;
+    let notes = {...this.state};
+    notes = notes.notesCont.map((note, i) => {
+      note.done = (id === note.id) ? !note.done: note.done;
     })
     this.setState(notes);
   }
   handleNoteText(val, id) {
-    console.log(val, id);
+    // let notes = this.state;
+    let notes = {...this.state};
+    notes = notes.notesCont.map((note, i) => {
+      note.text = (id === note.id) ? val: note.text;
+    })
+    this.setState(notes);
   }
   render() {
     const notes = this.state;
     return (
       <div className="notes-app">
       {notes.notesCont.map((el, i) =>
-        <Note singleNote={el} checkChange={this.handleCheck} index={i} key={i} />
+        <Note singleNote={el} checkChange={this.handleCheck} noteInput={this.handleNoteText} key={i} />
       )}
       </div>
     )
