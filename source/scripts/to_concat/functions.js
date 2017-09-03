@@ -1,37 +1,6 @@
 const app = document.querySelector("#app");
+import notesCont from "./modules/notes_vals"
 
-const notesCont = [
-  {
-    id: "0175d1f0-a8c6-41bf-8d02-df5734d829a4",
-    text: "this is some text",
-    assigned: "John Smith",
-    done: false,
-  },
-  {
-    id: "83c7ba2f-7392-4d7d-9e23-35adbe186046",
-    text: "note text goes here",
-    assigned: "Armand Tanzarian",
-    done: true,
-  },
-  {
-    id: "a11e3995-b0bd-4d58-8c48-5e49ae7f7f23",
-    text: "this is yet another note here",
-    assigned: "John Smith",
-    done: true,
-  }
-]
-
-const notesEdits = [
-  {
-    id: "a11e3995-b0bd-4d58-8c48-5e49ae7f7f23",
-    edits: [
-      "one",
-      "two",
-      "three",
-      "this is yet another note here"
-    ]
-  },
-]
 
 const Text = ({noteText=""}) =>
 <p className="foobar">{noteText}</p>
@@ -150,7 +119,7 @@ Note.PropTypes = {
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {notesCont, notesEdits}
+    this.state = {notesCont}
     this.handleCheck = this.handleCheck.bind(this);
     this.handleNoteText = this.handleNoteText.bind(this);
     this.handleEditHistory = this.handleEditHistory.bind(this);
@@ -173,15 +142,15 @@ class App extends React.Component {
   handleEditHistory(val, id) {
     let editsList = {...this.state};
     let i;
-    editsList.notesEdits.some((el, indx) => {
+    editsList.notesCont.some((el, indx) => {
       i = (el.id === id)? indx: false;
       return typeof i === "number";
     });
     if (typeof i === "number") {
-      editsList.notesEdits[i].edits.push(val);
+      editsList.notesCont[i].edits.push(val);
     } else {
       const myObject = { id: id, edits: [val], };
-      editsList.notesEdits.push(myObject)
+      editsList.notesCont.push(myObject)
     }
     this.setState(editsList);
   }
@@ -192,10 +161,10 @@ class App extends React.Component {
     // l = length of edit chain -- length or false
 
     let i = false, l = false;
-    editsList.notesEdits.some((el, indx) => {
+    editsList.notesCont.some((el, indx) => {
       if (el.id === id) {
         i = indx;
-        l = editsList.notesEdits[indx].edits.length - 1;
+        l = editsList.notesCont[indx].edits.length - 1;
       }
       return el.id === id;
     });
@@ -209,10 +178,10 @@ class App extends React.Component {
       return el.id === id;
     });
     if (typeof(i) === "number" && l > 1) {
-        const currIncr = editsList.notesEdits[i].increment || false;
+        const currIncr = editsList.notesCont[i].increment || false;
         const incr = (currIncr) ? currIncr - 1: l - 1;
-        editsList.notesEdits[i].increment = incr;
-        editsList.notesCont[e].text = editsList.notesEdits[i].edits[incr]
+        editsList.notesCont[i].increment = incr;
+        editsList.notesCont[e].text = editsList.notesCont[i].edits[incr]
     }
     this.setState(editsList);
   }
