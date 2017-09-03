@@ -21,7 +21,17 @@ const notesCont = [
   }
 ]
 
-const notesEdits = [];
+const notesEdits = [
+  {
+    id: "a11e3995-b0bd-4d58-8c48-5e49ae7f7f23",
+    edits: [
+      "one",
+      "two",
+      "three",
+      "this is yet another note here"
+    ]
+  },
+]
 
 const Text = ({noteText=""}) =>
 <p className="foobar">{noteText}</p>
@@ -60,11 +70,12 @@ Checkbox.PropTypes = {
   id:React.PropTypes.string,
 }
 
-const TextField = ({noteInput, id}) => {
+const TextField = ({noteInput, editHistory, id}) => {
   let _textArea;
   const submit = e => {
     e.preventDefault();
     noteInput(_textArea.value, id);
+    editHistory(_textArea.value, id);
     _textArea.value = "";
   }
   return (
@@ -84,7 +95,6 @@ TextField.PropTypes = {
   id: React.PropTypes.number,
 }
 
-const Note = ({singleNote, checkChange, noteInput}) => {
 const Button = ({action, id, label}) => {
   let _btn;
   const submit = e => {
@@ -107,16 +117,27 @@ Button.PropTypes = {
   id: React.PropTypes.string,
   label: React.PropTypes.string,
 }
+
+const Note = ({singleNote, checkChange, noteInput, editHistory, handleRevert}) => {
   return (
     <article className="note">
       <Text noteText={singleNote.text} />
-      <TextField noteInput={noteInput} id={singleNote.id}/>
+      <TextField
+        noteInput={noteInput}
+        editHistory={editHistory}
+        id={singleNote.id
+      }/>
       <Checkbox
         checked={singleNote.done}
         id={singleNote.id}
         checkChange={checkChange}
       />
       <Assigned text={singleNote.assigned} />
+      <Button
+        action={handleRevert}
+        id={singleNote.id}
+        label={"Revert"}
+      />
     </article>
   )
 }
@@ -132,6 +153,8 @@ class App extends React.Component {
     this.state = {notesCont, notesEdits}
     this.handleCheck = this.handleCheck.bind(this);
     this.handleNoteText = this.handleNoteText.bind(this);
+    this.handleEditHistory = this.handleEditHistory.bind(this);
+    this.handleRevert = this.handleRevert.bind(this);
   }
   handleCheck(id) {
     let notes = {...this.state};
@@ -141,30 +164,79 @@ class App extends React.Component {
     this.setState(notes);
   }
   handleNoteText(val, id) {
-    // let notes = this.state;
     let notes = {...this.state};
     notes = notes.notesCont.map((note, i) => {
       note.text = (id === note.id) ? val: note.text;
     })
     this.setState(notes);
   }
+  handleEditHistory(val, id) {
+    let editsList = {...this.state};
+    let i;
+    editsList.notesEdits.some((el, indx) => {
+      i = (el.id === id)? indx: false;
+      return typeof i === "number";
+    });
+    if (typeof i === "number") {
+      editsList.notesEdits[i].edits.push(val);
+    } else {
+      const myObject = { id: id, edits: [val], };
+      editsList.notesEdits.push(myObject)
+    }
+    this.setState(editsList);
+  }
+  handleRevert(id) {
+    let editsList = {...this.state};
+
+    // i = which one matches -- index of false
+    // l = length of edit chain -- length or false
+
+    let i = false, l = false;
+    editsList.notesEdits.some((el, indx) => {
+      if (el.id === id) {
+        i = indx;
+        l = editsList.notesEdits[indx].edits.length - 1;
+      }
+      return el.id === id;
+    });
+
+    // get entry that will be changed
+    let e;
+    editsList.notesCont.some((el, indx) => {
+      if (el.id === id) {
+        e = indx;
+      }
+      return el.id === id;
+    });
+    if (typeof(i) === "number" && l > 1) {
+        const currIncr = editsList.notesEdits[i].increment || false;
+        const incr = (currIncr) ? currIncr - 1: l - 1;
+        editsList.notesEdits[i].increment = incr;
+        editsList.notesCont[e].text = editsList.notesEdits[i].edits[incr]
+    }
+    this.setState(editsList);
+  }
   render() {
     const notes = this.state;
     return (
       <div className="notes-app">
       {notes.notesCont.map((el, i) =>
-        <Note singleNote={el} checkChange={this.handleCheck} noteInput={this.handleNoteText} key={i} />
+        <Note
+          singleNote={el}
+          checkChange={this.handleCheck}
+          noteInput={this.handleNoteText}
+          editHistory={this.handleEditHistory}
+          handleRevert={this.handleRevert}
+          key={i}
+        />
       )}
       </div>
     )
   }
 }
-
 ReactDOM.render(
   <App />, app
 );
-
-
 
 
 // import AddColorForm from "./modules/addForm"
