@@ -85,6 +85,28 @@ TextField.PropTypes = {
 }
 
 const Note = ({singleNote, checkChange, noteInput}) => {
+const Button = ({action, id, label}) => {
+  let _btn;
+  const submit = e => {
+    e.preventDefault();
+    action(id);
+  }
+return (
+    <div>
+    <button
+      type="submit"
+      onClick={submit}
+      ref={input => _btn = input}
+    >
+      {label}</button>
+  </div>
+  )
+}
+Button.PropTypes = {
+  action: React.PropTypes.func,
+  id: React.PropTypes.string,
+  label: React.PropTypes.string,
+}
   return (
     <article className="note">
       <Text noteText={singleNote.text} />
