@@ -1,6 +1,14 @@
 const app = document.querySelector("#app");
 import notesCont from "./modules/notes_vals"
 
+console.log(notesCont);
+
+let namesList = notesCont.map(note => note.assigned)
+
+namesList = namesList.filter(function(elem, index, self) {
+    return index == self.indexOf(elem);
+})
+
 
 const Text = ({noteText=""}) =>
 <p className="foobar">{noteText}</p>
@@ -9,11 +17,43 @@ Text.propTypes = {
   noteText: React.PropTypes.string,
 }
 
-const Assigned = ({text=""}) =>
-  <p className="assigned-name">{text}</p>
+const Assigned = ({action = f => f, text="", list =[], id}) => {
 
-  Assigned.PropTypes = {
-    text: React.PropTypes.string,
+  // console.log('text', text);
+
+  let _select;
+  const submit = e => {
+    e.preventDefault()
+    action(_select.value, id)
+  }
+  return (
+    // <p className="assigned-name">{text}</p>
+    <fieldset className="more-space-below">
+      <label>Select list</label>
+      <select
+        id="myList"
+        value={text}
+        ref={select => _select = select}
+        onChange={submit}
+      >
+      {
+        list.map((el, i) => <Select item={el} key={i} />)
+      }
+      </select>
+    </fieldset>
+  )
+}
+
+Assigned.PropTypes = {
+  text: React.PropTypes.string,
+  list: React.PropTypes.array,
+}
+
+const Select = ({item}) =>
+  <option>{item}</option>
+
+  Select.PropTypes = {
+    item: React.PropTypes.string,
   }
 
 const Checkbox = ({checked="false", checkChange, id}) => {
@@ -87,7 +127,7 @@ Button.PropTypes = {
   label: React.PropTypes.string,
 }
 
-const Note = ({singleNote, checkChange, noteInput, editHistory, handleRevert}) => {
+const Note = ({singleNote, namesList, checkChange, noteInput, editHistory, handleRevert, handleAssigned}) => {
   return (
     <article className="note">
       <Text noteText={singleNote.text} />
@@ -101,7 +141,12 @@ const Note = ({singleNote, checkChange, noteInput, editHistory, handleRevert}) =
         id={singleNote.id}
         checkChange={checkChange}
       />
-      <Assigned text={singleNote.assigned} />
+      <Assigned
+        text={singleNote.assigned}
+        list={namesList}
+        id={singleNote.id}
+        action={handleAssigned}
+      />
       <Button
         action={handleRevert}
         id={singleNote.id}
@@ -119,11 +164,12 @@ Note.PropTypes = {
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {notesCont}
+    this.state = {notesCont, namesList}
     this.handleCheck = this.handleCheck.bind(this);
     this.handleNoteText = this.handleNoteText.bind(this);
     this.handleEditHistory = this.handleEditHistory.bind(this);
     this.handleRevert = this.handleRevert.bind(this);
+    this.handleAssigned = this.handleAssigned.bind(this);
   }
   handleCheck(id) {
     let notes = {...this.state};
@@ -154,12 +200,19 @@ class App extends React.Component {
     }
     this.setState(editsList);
   }
+  handleAssigned(val, id) {
+    console.log(val, id);
+    let notes = {...this.state};
+    notes = notes.notesCont.map((note, i) => {
+      note.assigned = (id === note.id) ? val: note.assigned;
+    })
+    this.setState(notes);
+  }
   handleRevert(id) {
     let editsList = {...this.state};
 
     // i = which one matches -- index of false
     // l = length of edit chain -- length or false
-
     let i = false, l = false;
     editsList.notesCont.some((el, indx) => {
       if (el.id === id) {
@@ -168,7 +221,6 @@ class App extends React.Component {
       }
       return el.id === id;
     });
-
     // get entry that will be changed
     let e;
     editsList.notesCont.some((el, indx) => {
@@ -192,10 +244,12 @@ class App extends React.Component {
       {notes.notesCont.map((el, i) =>
         <Note
           singleNote={el}
+          namesList={namesList}
           checkChange={this.handleCheck}
           noteInput={this.handleNoteText}
           editHistory={this.handleEditHistory}
           handleRevert={this.handleRevert}
+          handleAssigned={this.handleAssigned}
           key={i}
         />
       )}
