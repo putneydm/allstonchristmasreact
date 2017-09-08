@@ -11,24 +11,6 @@ namesList = namesList.filter(function(elem, index, self) {
 
 const editStates = [];
 
-const Text = ({toggle, id, text="", editMode}) => {
-  let _text
-  const click = e => {
-    toggle(!editMode, id)
-  }
-  return (
-    <p
-      className="note-text"
-      ref={input => _text = input}
-      onClick={click}
-    >
-  {text}</p>)
-}
-
-Text.propTypes = {
-  noteText: React.PropTypes.string,
-}
-
 const Assigned = ({action = f => f, text="", list =[], id}) => {
   let _select;
   const submit = e => {
@@ -77,7 +59,6 @@ const Checkbox = ({checked="false", checkChange, id}) => {
       id={`check${id}`}
     />
     <label htmlFor={`check${id}`}>Completed</label>
-    <p>{checked ? "true": "false"}</p>
     </form>
   )
 }
@@ -89,50 +70,30 @@ Checkbox.PropTypes = {
 
 const NoteText = ({toggle, noteInput, editHistory, note}) => {
   const editMode = note.editMode || false;
-  return (
-    <div>
-    {
-      !editMode ? <Text text={note.text} toggle={toggle} id={note.id} editMode={editMode}/> :
-      <TextField
-        noteInput={noteInput}
-        editHistory={editHistory}
-        toggle={toggle}
-        id={note.id}
-        editMode={editMode}
-        text={note.text}
-      />
-    }
-    </div>
-  )
-}
-
-const TextField = ({toggle, noteInput, editHistory, editMode, id, text=""}) => {
   let _textArea;
   const submit = e => {
-    e.preventDefault();
-    noteInput(_textArea.value, id);
-    editHistory(_textArea.value, id);
-    toggle(!editMode, id)
-    _textArea.value = "";
+    noteInput(_textArea.innerText, note.id);
+    editHistory(_textArea.innerText, note.id);
+    toggle(!editMode, note.id)
+  }
+  const textDisplay = e => {
+    _textArea.focus();
+    if (!editMode) {
+      toggle(!editMode, note.id)
+    }
   }
   return (
-      <form>
-      <textarea
-        className="more-space-below fake-text"
-        placeholder="Enter a note ..."
-        defaultValue={text}
-        ref={input => _textArea = input}
-        onBlur={submit}
+    <div
+      contentEditable={editMode}
+      className="note-editable"
+      ref={input => _textArea = input}
+      onBlur={submit}
+      onClick={textDisplay}
       >
-      </textarea>
-      </form>
+        {note.text}
+      </div>
   )
 }
-TextField.PropTypes = {
-  noteInput: React.PropTypes.func,
-  id: React.PropTypes.number,
-}
-
 const Button = ({action, id, label}) => {
   let _btn;
   const submit = e => {
