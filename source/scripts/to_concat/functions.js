@@ -9,25 +9,33 @@ namesList = namesList.filter(function(elem, index, self) {
     return index == self.indexOf(elem);
 })
 
+const editStates = [];
 
-const Text = ({noteText=""}) =>
-<p className="foobar">{noteText}</p>
+const Text = ({toggle, id, text="", editMode}) => {
+  let _text
+  const click = e => {
+    toggle(!editMode, id)
+  }
+  return (
+    <p
+      className="note-text"
+      ref={input => _text = input}
+      onClick={click}
+    >
+  {text}</p>)
+}
 
 Text.propTypes = {
   noteText: React.PropTypes.string,
 }
 
 const Assigned = ({action = f => f, text="", list =[], id}) => {
-
-  // console.log('text', text);
-
   let _select;
   const submit = e => {
     e.preventDefault()
     action(_select.value, id)
   }
   return (
-    // <p className="assigned-name">{text}</p>
     <fieldset className="more-space-below">
       <label>Select list</label>
       <select
@@ -79,24 +87,45 @@ Checkbox.PropTypes = {
   id:React.PropTypes.string,
 }
 
-const TextField = ({noteInput, editHistory, id}) => {
+const NoteText = ({toggle, noteInput, editHistory, note}) => {
+  const editMode = note.editMode || false;
+  return (
+    <div>
+    {
+      !editMode ? <Text text={note.text} toggle={toggle} id={note.id} editMode={editMode}/> :
+      <TextField
+        noteInput={noteInput}
+        editHistory={editHistory}
+        toggle={toggle}
+        id={note.id}
+        editMode={editMode}
+        text={note.text}
+      />
+    }
+    </div>
+  )
+}
+
+const TextField = ({toggle, noteInput, editHistory, editMode, id, text=""}) => {
   let _textArea;
   const submit = e => {
     e.preventDefault();
     noteInput(_textArea.value, id);
     editHistory(_textArea.value, id);
+    toggle(!editMode, id)
     _textArea.value = "";
   }
   return (
-    <form onSubmit={submit}>
+      <form>
       <textarea
-        className="more-space-below"
+        className="more-space-below fake-text"
         placeholder="Enter a note ..."
+        defaultValue={text}
         ref={input => _textArea = input}
+        onBlur={submit}
       >
       </textarea>
-      <button className="more-space-below" type="submit">Submit</button>
-    </form>
+      </form>
   )
 }
 TextField.PropTypes = {
@@ -127,15 +156,15 @@ Button.PropTypes = {
   label: React.PropTypes.string,
 }
 
-const Note = ({singleNote, namesList, checkChange, noteInput, editHistory, handleRevert, handleAssigned}) => {
+const Note = ({singleNote, namesList, checkChange, noteInput, editHistory, handleRevert, handleAssigned, handleEditToggle}) => {
   return (
     <article className="note">
-      <Text noteText={singleNote.text} />
-      <TextField
+      <NoteText
         noteInput={noteInput}
         editHistory={editHistory}
-        id={singleNote.id
-      }/>
+        toggle={handleEditToggle}
+        note={singleNote}
+      />
       <Checkbox
         checked={singleNote.done}
         id={singleNote.id}
@@ -164,12 +193,13 @@ Note.PropTypes = {
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {notesCont, namesList}
+    this.state = {notesCont, editStates}
     this.handleCheck = this.handleCheck.bind(this);
     this.handleNoteText = this.handleNoteText.bind(this);
     this.handleEditHistory = this.handleEditHistory.bind(this);
     this.handleRevert = this.handleRevert.bind(this);
     this.handleAssigned = this.handleAssigned.bind(this);
+    this.handleEditToggle = this.handleEditToggle.bind(this);
   }
   handleCheck(id) {
     let notes = {...this.state};
@@ -185,18 +215,28 @@ class App extends React.Component {
     })
     this.setState(notes);
   }
+  handleEditToggle(val, id) {
+    let notes = {...this.state};
+    notes = notes.notesCont.map((note, i) => {
+      if (id === note.id) {
+        note.editMode = val;
+      }
+    })
+    this.setState(notes);
+  }
   handleEditHistory(val, id) {
     let editsList = {...this.state};
     let i;
-    editsList.notesCont.some((el, indx) => {
+    editsList.editStates.some((el, indx) => {
       i = (el.id === id)? indx: false;
       return typeof i === "number";
     });
-    if (typeof i === "number") {
-      editsList.notesCont[i].edits.push(val);
+    if (i && typeof i === "number") {
+      console.log(editsList.editStates[i].edits);
+      editsList.editStates[i].edits.push(val);
     } else {
       const myObject = { id: id, edits: [val], };
-      editsList.notesCont.push(myObject)
+      editsList.editStates.push(myObject)
     }
     this.setState(editsList);
   }
@@ -250,6 +290,7 @@ class App extends React.Component {
           editHistory={this.handleEditHistory}
           handleRevert={this.handleRevert}
           handleAssigned={this.handleAssigned}
+          handleEditToggle={this.handleEditToggle}
           key={i}
         />
       )}
