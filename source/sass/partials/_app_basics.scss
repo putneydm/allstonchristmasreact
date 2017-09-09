@@ -104,11 +104,12 @@ button.close {
   padding:10px;
 }
 .notes-app {
-  display: flex
+  display: flex;
+  flex-wrap: wrap;
 }
 .note {
   border:1px solid red;
-  flex-basis: 23%;
+  flex-basis: 31%;
   flex-grow: 0;
   flex-shrink: 0;
   margin:10px 1%;
@@ -153,4 +154,8 @@ input[type=checkbox]:checked + label {
   outline:none;
   color:#000;
   transition: color .2s;
+}
+[contentEditable=true]:empty:not(:focus)::before {
+  content:"Note text ...";
+  color:#999;
 }
