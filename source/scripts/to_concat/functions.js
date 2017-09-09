@@ -1,7 +1,7 @@
 const app = document.querySelector("#app");
-import notesCont from "./modules/notes_vals"
+import notesCont from "./modules/notes_vals";
+import { v4 } from "../../../node_modules/uuid";
 
-console.log(notesCont);
 
 let namesList = notesCont.map(note => note.assigned)
 
@@ -19,13 +19,14 @@ const Assigned = ({action = f => f, text="", list =[], id}) => {
   }
   return (
     <fieldset className="more-space-below">
-      <label>Select list</label>
+      <label>Assigned to</label>
       <select
         id="myList"
         value={text}
         ref={select => _select = select}
         onChange={submit}
       >
+      <option>None</option>
       {
         list.map((el, i) => <Select item={el} key={i} />)
       }
@@ -89,6 +90,7 @@ const NoteText = ({toggle, noteInput, editHistory, note}) => {
       ref={input => _textArea = input}
       onBlur={submit}
       onClick={textDisplay}
+      placeholder="Enter note text ..."
       >
         {note.text}
       </div>
@@ -117,9 +119,27 @@ Button.PropTypes = {
   label: React.PropTypes.string,
 }
 
-const Note = ({singleNote, namesList, checkChange, noteInput, editHistory, handleRevert, handleAssigned, handleEditToggle}) => {
+const NewNote = ({handleNewNote}) => {
+let _note
+const submit = e => handleNewNote()
+return (
+  <div
+  className="note"
+    ref={input => _note = input}
+    onClick={submit}
+  >
+  <p>new note</p>
+</div>
+)}
+
+const Note = ({singleNote, namesList, checkChange, noteInput, editHistory, handleRevert, handleAssigned, handleEditToggle, handleNoteRemove}) => {
   return (
     <article className="note">
+      <Button
+        action={handleNoteRemove}
+        id={singleNote.id}
+        label={"Delete Note"}
+      />
       <NoteText
         noteInput={noteInput}
         editHistory={editHistory}
@@ -161,6 +181,28 @@ class App extends React.Component {
     this.handleRevert = this.handleRevert.bind(this);
     this.handleAssigned = this.handleAssigned.bind(this);
     this.handleEditToggle = this.handleEditToggle.bind(this);
+    this.handleNoteRemove = this.handleNoteRemove.bind(this);
+    this.handleNewNote = this.handleNewNote.bind(this);
+  }
+  handleNewNote() {
+    let notes = {...this.state};
+    let newNote = {};
+    newNote.id = v4();
+    newNote.text = "";
+    newNote.assigned = "";
+    newNote.done = false;
+    newNote.editMode = true;
+    notes.notesCont.push(newNote)
+    this.setState(notes);
+  }
+  handleNoteRemove(id) {
+    let notes = {...this.state};
+    let toRemove;
+    notes.notesCont.map((note, i) => {
+      toRemove = (id === note.id) ? i: false;
+    })
+    notes.notesCont.splice(toRemove, 1);
+    this.setState(notes);
   }
   handleCheck(id) {
     let notes = {...this.state};
@@ -252,9 +294,11 @@ class App extends React.Component {
           handleRevert={this.handleRevert}
           handleAssigned={this.handleAssigned}
           handleEditToggle={this.handleEditToggle}
+          handleNoteRemove={this.handleNoteRemove}
           key={i}
         />
       )}
+      <NewNote handleNewNote={this.handleNewNote} />
       </div>
     )
   }
