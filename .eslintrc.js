@@ -22,7 +22,11 @@ module.exports = {
         ],
         "semi": [
             "error",
-            "always"
+            "never"
+        ],
+        "require-default-props": [
+          "error",
+          "never"
         ]
     }
 };

@@ -3,9 +3,31 @@
 <html class="no-js" lang="">
     @@include('../html_partials/common/head.html')
     <body>
+      @@include('../html_partials/common/svg_sprite_embed.html')
         <!-- Add your site or application content here -->
         <main class="main">
           @@include('../html_partials/app.html')
+
+          <div class="notes-app">
+
+            <div class="select">
+              <ul>
+                <li>Active name
+                  <ul>
+                    <li><a href="#">Name one</a></li>
+                    <li><a href="#">Name two</a></li>
+                    <li><a href="#">Name three</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+         </div>
+
+
+        <div class="notes-app" id="app-too">
+
+        </div>
+
         </main>
     </body>
     @@include('../html_partials/common/js_links.html')

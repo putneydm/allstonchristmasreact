@@ -1,0 +1,8 @@
+{
+    "eslint.enable": true,
+    "eslint.autoFixOnSave": false,
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact"
+    ]
+}

@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+* {
+  box-sizing:border-box;;
+}
+.drag-container {
+  display: flex;
+  border:1px solid blue;
+  flex-wrap: wrap;
+  /*height:100vh;*/
+  align-items: flex-start;
+  padding:0 1% 0;
+}
+.div {
+  border:1px solid red;
+  height:23vw;
+  padding:0;
+  position: relative;
+  flex-basis: 22.83%;
+  flex-shrink: 0;
+  background-color: #FFFFE0;
+  /*margin-bottom: 2vw;*/
+  margin:0 1% 2vh;
+}
+/*.drop {*/
+  /*width:20px;*/
+  /*transition: width .2s;
+  align-items: flex-start;
+}*/
+/*.drop:first-child {
+    margin-left:-1%;
+}
+.drop:nth-child(9n) {
+  margin-left:-1%;
+}*/
+.drop:last-child {
+  border:1px solid green;
+  width:23vw;
+  flex-grow: 1;
+}
+.div.active {
+  /*background-color: red;*/
+  /*width:100px;*/
+  /*padding:0;*/
+  margin-right: 120px;
+  /*transition: width .2s;*/
+}
+/*.div.active::after {
+  content: "";
+  display: block;
+  width:120px;
+  height:100px;
+  border:1px solid green;
+  position: absolute;
+  left:100px;
+  top:0px;
+}*/
+/*.drop.full {
+  width:100px;
+}*/
+.drop {
+  /*border:4px solid black;*/
+  align-items: flex-start;
+  border:1px solid transparent;
+  flex-basis: 0%;
+  flex-shrink: 0;
+  height:23vw;
+  transition: width .2s;
+  margin-bottom: 2vw;
+
+  /*flex-basis: 22.83%;*/
+  /*margin:0 1%;*/
+}
+.drop:nth-child(4) {
+  border:10px solid red;
+}
+.drop::before {
+  content: "";
+  display: block;
+  opacity:0;
+}
+.drop.active {
+  /*width:120px;*/
+  /*flex-basis: 24.7%;*/
+  /*flex-basis: 23%;*/
+  flex-basis: 24.83%;
+  /*background-color: #d0d0d0;*/
+  transition: flex-basis .1s;
+  position: relative;
+  flex-shrink: 1;
+  margin:0%;
+}
+.drop.active::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+  margin:auto;
+  width:18vw;
+  height:20vh;
+  border:4px dashed #d0d0d0;
+  opacity:1;
+  transition: opacity .1s ease-in .2s;
+  border-radius:10px;
+}
+.div-draggable {
+  width:100px;
+  height:23.7vw;
+  background-color: blue;
+}
+</style>
+
+</head>
+<body>
+  <div id="app-too" class="drag-container">
+    <div class="drop" id="drop-0">
+    </div>
+
+    <!-- <div class="div-draggable" id="divDrag" draggable="true">
+
+    </div> -->
+    <!-- <div id="div2" class="div drop"></div>
+    <div id="div3" class="div"></div>
+    <div id="div4" class="div drop"></div>
+    <div id="div5" class="div">5</div>
+    <div id="div6" class="div drop"></div> -->
+  </div>
+
+</body>
+
+<script>
+  const container = document.querySelector('.drag-container')
+  const div1 = document.querySelector("#div1")
+  const div2 = document.querySelector('#div2')
+  const div3 = document.querySelector('#div3')
+
+
+  const blocks = [
+    {
+      id:"one",
+      order: 1,
+    },
+    {
+      id:"two",
+      order: 3,
+    },
+    {
+      id:"three",
+      order: 2,
+    },
+    {
+      id:"four",
+      order: 4,
+    },
+    {
+      id:"five",
+      order: 5,
+    },
+    {
+      id:"six",
+      order: 6,
+    },
+    {
+      id:"seven",
+      order: 7,
+    },
+    {
+      id:"eight",
+      order: 8,
+    }
+  ]
+
+
+  blocks.sort(function(a,b) {return (a.order> b.order) ? 1 : ((b.order > a.order) ? -1 : 0);} );
+  blocks.forEach((el, i) => {
+    const block = document.createElement("DIV")
+    block.id = el.id
+    block.classList.add('div')
+    block.draggable = "true"
+    block.innerHTML = el.id;
+
+    const dropHere = document.createElement("DIV")
+    dropHere.id = "drop-" + el.id;
+    dropHere.classList.add('drop')
+    container.append(block)
+    container.append(dropHere)
+  });
+  container.addEventListener('dragstart', (e) => {
+    console.log('drag start', e.target);
+    e.target.classList.add('drag')
+    e.dataTransfer.setData("text", e.target.id);
+  })
+
+  container.addEventListener('dragover', (e) => {
+    e.preventDefault()
+    if (!e.target.classList.contains('drag') && e.target.classList.contains('drop')) {
+      e.target.classList.add('active');
+    }
+  })
+  container.addEventListener('dragleave', (e) => {
+    e.target.classList.remove("active");
+  })
+
+  container.addEventListener('drop', (e) => {
+    e.preventDefault()
+    if (e.target.classList.contains('drop')) {
+      var data = e.dataTransfer.getData("text");
+      e.target.classList.remove("active");
+    }
+  })
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+  }
+
+  function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    ev.target.appendChild(document.getElementById(data));
+  }
+</script>
+
+
+</html>
