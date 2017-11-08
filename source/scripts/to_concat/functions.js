@@ -36,8 +36,21 @@ const Loader = () =>
   <div className="loader active">
     <h1>Loading</h1>
   </div>
+
+  const Failed = ({ action = f => f }) => {
+  let _select
+  const submit = (e) => {
+    e.preventDefault()
+    action()
   }
-}
+  return (
+    <div className="loader active failed">
+      <h1
+        onClick={submit}
+      >
+        Failed</h1>
+    </div>
+  )}
 
 const Assigned = ({ action = f => f, text = "", list = [], id }) => {
   let _select
