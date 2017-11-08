@@ -468,4 +468,26 @@ input.color[type=radio]:checked + label {
       }
     }
   }
-// }
+  .notes-app {
+    // opacity: 0;
+  }
+  .notes-app.active {
+    // border:3px solid red;
+    // animation-name: fadeIn;
+    // animation-duration: .3s;
+  }
+  .loader {
+    display: flex;
+    flex-wrap: wrap;
+    max-width:1200px;
+    margin:0 auto;
+    height:100vh;
+    background-color:white;
+    align-items: center;
+    justify-content: center;
+    background-color: blue
+  }
+  @keyframes fadeIn {
+    from {opacity:0}
+    to {opacity:8}
+}
