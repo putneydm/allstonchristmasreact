@@ -589,11 +589,11 @@ class App extends React.Component {
   }
   render() {
   const notes = this.state
-  console.log('colors', colors);
     return (
-      <div className="notes-app" > {
-        notes.notesCont.map((el, i) => (
-          <Note
+      this.state.loading ? <Loader /> :
+      <div className={this.state.loading? "notes-app": "notes-app active"}>
+      {notes.notesCont.map((el, i) => (
+          <NoteToo
             singleNote={el}
             namesList={namesList}
             colors={colors}
@@ -606,6 +606,7 @@ class App extends React.Component {
             handleNoteRemove={this.handleNoteRemove}
             handleColorPicker={this.handleColorPicker}
             key={i}
+            handleMount={this.handleMount}
           />)
       )}
         <NewNote handleNewNote={this.handleNewNote} />
