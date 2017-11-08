@@ -19,6 +19,8 @@ namesList.push("Unassigned")
 
 const editStates = []
 
+const rando = () => Math.floor((Math.random() * 4) + 1);
+
 const Loader = () =>
   <div className="loader active">
     <h1>Loading</h1>
