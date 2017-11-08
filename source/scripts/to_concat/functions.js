@@ -453,10 +453,11 @@ class NoteToo extends React.Component {
   }
 }
 
+
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { notesCont, editStates }
+    this.state = { notesCont, editStates, loading: false, count: 0 }
     this.handleCheck = this.handleCheck.bind(this)
     this.handleNoteText = this.handleNoteText.bind(this)
     this.handleEditHistory = this.handleEditHistory.bind(this)
