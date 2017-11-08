@@ -473,21 +473,39 @@ class App extends React.Component {
     this.handleNoteRemove = this.handleNoteRemove.bind(this)
     this.handleNewNote = this.handleNewNote.bind(this)
     this.handleColorPicker = this.handleColorPicker.bind(this)
+    this.handleReload = this.handleReload.bind(this)
   }
   componentWillMount() {
-    this.setState({ loading: true })
+    this.setState({ loadFailed:false, loading: true })
     getData()
-    // .then(data => data.val())
     .then(
       data => cleanData(data.val())
     )
     .then(notesCont => {
-      this.setState({notesCont, loading:false})
+      this.setState({ notesCont, loading:false, loadFailed:false })
     }).catch(
-      foo => console.log(foo)
+      err => this.handleLoadFail(err)
     )
   }
   componentDidMount() {
+  }
+  handleLoadFail(err=false) {
+    if (err) {
+      this.setState({ loadFailed:true, loading:false })
+    }
+  }
+  handleReload() {
+    const url = rando() === 1 ? "notes/" : "notes/zzzz"
+    this.setState({ loadFailed:false, loading: true })
+    getData(url)
+    .then(
+      data => cleanData(data.val())
+    )
+    .then(notesCont => {
+      this.setState({ notesCont, loading:false, loadFailed:false })
+    }).catch(
+      err => this.handleLoadFail(err)
+    )
   }
   handleNewNote() {
     const notes = { ...this.state }
@@ -596,7 +614,10 @@ class App extends React.Component {
   render() {
   const notes = this.state
     return (
-      this.state.loading ? <Loader /> :
+      this.state.loading && !this.state.loadFailed ? <Loader /> :
+      this.state.loadFailed ? <Failed
+        action = {this.handleReload}
+      /> :
       <div className={this.state.loading? "notes-app": "notes-app active"}>
       {notes.notesCont.map((el, i) => (
           <NoteToo
