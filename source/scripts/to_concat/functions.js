@@ -467,16 +467,34 @@ class App extends React.Component {
     this.handleNewNote = this.handleNewNote.bind(this)
     this.handleColorPicker = this.handleColorPicker.bind(this)
   }
+  componentWillMount() {
+    this.setState({ loading: true })
+    getData()
+    // .then(data => data.val())
+    .then(
+      data => cleanData(data.val())
+    )
+    .then(notesCont => {
+      this.setState({notesCont, loading:false})
+    }).catch(
+      foo => console.log(foo)
+    )
+  }
+  componentDidMount() {
+  }
   handleNewNote() {
     const notes = { ...this.state }
-    const newNote = {}
-    newNote.id = v4()
-    newNote.text = ""
-    newNote.assigned = "Unassigned"
-    newNote.done = false
-    newNote.editMode = true
-    notes.notesCont.push(newNote)
-    this.setState(notes)
+    const newNote = { text: "this is a new note", assigned: "Unassigned", done: false, editMode: true, checked: false }
+
+    const key = newPostKey(database);
+    writeNewPost(newNote, `notes/${key}`)
+
+    getData(`notes/${key}`).then(snapshot => {
+      let notesCont = snapshot
+      notesCont.id = key;
+      notes.notesCont.push(newNote)
+      this.setState(notes)
+    })
   }
   handleNoteRemove(id) {
     let notes = { ...this.state }
