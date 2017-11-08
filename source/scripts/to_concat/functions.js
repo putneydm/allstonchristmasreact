@@ -336,6 +336,69 @@ RestoreButton.propTypes = {
   id: React.PropTypes.string,
 }
 
+
+const NoteHeader = ({action, id}) =>
+<header
+  className="note-header">
+    <CloseButton
+      action={action}
+      id={id}
+  />
+</header>
+
+const NoteContent = ({noteInput, editHistory, toggle, note }) =>
+<div
+  className="note-content">
+    <NoteText
+      noteInput={noteInput}
+      editHistory={editHistory}
+      toggle={toggle}
+      note={note}
+    />
+</div>
+
+const NoteFooter = ({colors, id, selectColor, action, label, checked, checkChange, text, list, dropAction}) =>
+<footer
+  className="note-footer">
+    <ColorPicker
+      colors={ colors }
+      id={ id }
+      selectColor={ selectColor }
+    />
+  <div>
+    <RevertButton
+      action={ action }
+      id={ id }
+      label={ label }
+    />
+    <RestoreButton
+      action={ action }
+      id={ id }
+      label={ label }
+    />
+  </div>
+  <div
+    className="notes-status">
+    <Checkbox
+      checked={ checked }
+      checkChange={ checkChange }
+    />
+    <SelectDropdown
+      text={ text }
+      list={ list }
+      id={ id }
+      action={ dropAction }
+    />
+    <Assigned
+      text={ text }
+      list={ list }
+      id={ id }
+      action={ dropAction }
+    />
+  </div>
+</footer>
+
+
 const NewNote = ({ handleNewNote }) => {
   let _note
   const submit = () => handleNewNote()
@@ -349,91 +412,45 @@ const NewNote = ({ handleNewNote }) => {
     </div>
   )
 }
-
 NewNote.propTypes = {
   handleNewNote: React.PropTypes.func,
 }
 
-
-const Note = ({ singleNote, namesList, checkChange, noteInput, editHistory, handleRevert, handleAssigned, handleEditToggle, handleNoteRemove, colors, handleColorPicker }) => {
-  console.log("note", colors);
-  return (
-    <article
-      className={`note ${singleNote.color}`}
-      id={`note-${singleNote.id}`}
-      draggable="true"
-    >
-      <header
-        className="note-header">
-          <CloseButton
-            action={handleNoteRemove}
-            id={singleNote.id}
+class NoteToo extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <article
+        className={`note ${this.props.singleNote.color}`}
+        id={`note-${this.props.singleNote.id}`}
+      >
+        <NoteHeader
+          action={this.props.handleNoteRemove}
+          id={this.props.singleNote.id}
         />
-      </header>
-      <div
-        className="note-content">
-          <NoteText
-            noteInput={noteInput}
-            editHistory={editHistory}
-            toggle={handleEditToggle}
-            note={singleNote}
+        <NoteContent
+          noteInput={this.props.noteInput}
+          editHistory={this.props.editHistory}
+          toggle={this.props.handleEditToggle}
+          note={this.props.singleNote}
         />
-      </div>
-      <footer
-        className="note-footer">
-          <ColorPicker
-            colors={colors}
-            id={singleNote.id}
-            selectColor={handleColorPicker}
-          />
-        <div>
-          <RevertButton
-            action={handleRevert}
-            id={singleNote.id}
-            label={"Revert"}
-          />
-          <RestoreButton
-            action={handleRevert}
-            id={singleNote.id}
-            label={"Revert"}
-          />
-        </div>
-        <div
-          className="notes-status">
-          <Checkbox
-            checked={singleNote.done}
-            id={singleNote.id}
-            checkChange={checkChange}
-          />
-          <SelectDropdown
-            text={singleNote.assigned}
-            list={namesList}
-            id={singleNote.id}
-            action={handleAssigned}
-          />
-          <Assigned
-            text={singleNote.assigned}
-            list={namesList}
-            id={singleNote.id}
-            action={handleAssigned}
-          />
-        </div>
-      </footer>
-    </article>
-  )
-}
-Note.propTypes = {
-  singleNote: React.PropTypes.object,
-  namesList: React.PropTypes.array,
-  checkChange: React.PropTypes.func,
-  noteInput: React.PropTypes.func,
-  editHistory: React.PropTypes.func,
-  handleRevert: React.PropTypes.func,
-  handleAssigned: React.PropTypes.func,
-  handleEditToggle: React.PropTypes.func,
-  handleNoteRemove: React.PropTypes.func,
-  colors: React.PropTypes.array,
-  handleColorPicker: React.PropTypes.func,
+        <NoteFooter
+          colors={this.props.colors}
+          id={this.props.singleNote.id}
+          selectColor={this.props.handleColorPicker}
+          action={this.props.handleRevert}
+          label={"Revert"}
+          checked={this.props.singleNote.done}
+          checkChange={this.props.checkChange}
+          text={this.props.singleNote.assigned}
+          list={this.props.namesList}
+          dropAction = {this.props.handleAssigned}
+        />
+      </article>
+    )
+  }
 }
 
 class App extends React.Component {
