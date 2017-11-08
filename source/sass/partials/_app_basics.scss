@@ -491,3 +491,6 @@ input.color[type=radio]:checked + label {
     from {opacity:0}
     to {opacity:8}
 }
+.loader.failed {
+  background-color: red;
+}
