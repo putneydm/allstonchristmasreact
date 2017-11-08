@@ -1,6 +1,4 @@
-import notesCont from "./modules/notes_vals"
 import colors from "./modules/colors"
-import { v4 } from "../../../node_modules/uuid"
 
 import React, { Component } from "../../../node_modules/react"
 import ReactDOM from "../../../node_modules/react-dom"
