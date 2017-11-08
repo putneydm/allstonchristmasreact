@@ -2,6 +2,7 @@ import colors from "./modules/colors"
 
 import React, { Component } from "../../../node_modules/react"
 import ReactDOM from "../../../node_modules/react-dom"
+import { newPostKey, writeNewPost, cleanData, getData } from "./modules/firebase";
 
 const app = document.querySelector("#app")
 const database = firebase.database()
