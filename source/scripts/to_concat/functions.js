@@ -19,19 +19,6 @@ namesList.push("Unassigned")
 
 const editStates = []
 
-class Loader extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-  componentWillUnmount() {
-    console.log('unmount');
-  }
-  render() {
-    return (
-      <div className="loader active">
-        <h1>Loading</h1>
-      </div>
-    )
 const Loader = () =>
   <div className="loader active">
     <h1>Loading</h1>
