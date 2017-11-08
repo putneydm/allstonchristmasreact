@@ -10,10 +10,12 @@ const app = document.querySelector("#app")
 const database = firebase.database()
 
 
+let notesCont = []
 let namesList = notesCont.map(note => note.assigned)
 
 namesList = namesList.filter((elem, index, self) => index == self.indexOf(elem))
 namesList.push("Unassigned")
+
 
 const editStates = []
 
