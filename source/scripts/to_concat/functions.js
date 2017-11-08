@@ -518,10 +518,15 @@ class App extends React.Component {
     })
     this.setState({ notesCont })
   }
-  handleNoteText(val, id) {
+  handleNoteText(val, id, ) {
     let notes = { ...this.state }
-    notes = notes.notesCont.map(note => note.text = (id === note.id) ? val : note.text)
-    this.setState(notes)
+    writeNewPost({ text: val },`notes/${id}/`)
+    getData(`notes/${id}/text`)
+    .then(snapshot => {
+      console.log(snapshot);
+      notes = notes.notesCont.map(note => note.text = (id === notes.id) ? snapshot: note.text)
+      this.setState(notes)
+    })
   }
   handleEditToggle(val, id) {
     let notes = { ...this.state }
