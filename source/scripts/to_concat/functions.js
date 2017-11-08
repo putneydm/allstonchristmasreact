@@ -17,6 +17,22 @@ namesList.push("Unassigned")
 
 const editStates = []
 
+class Loader extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  componentWillUnmount() {
+    console.log('unmount');
+  }
+  render() {
+    return (
+      <div className="loader active">
+        <h1>Loading</h1>
+      </div>
+    )
+  }
+}
+
 const Assigned = ({ action = f => f, text = "", list = [], id }) => {
   let _select
   const submit = (e) => {
