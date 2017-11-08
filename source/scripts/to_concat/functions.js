@@ -32,6 +32,10 @@ class Loader extends React.Component {
         <h1>Loading</h1>
       </div>
     )
+const Loader = () =>
+  <div className="loader active">
+    <h1>Loading</h1>
+  </div>
   }
 }
 
