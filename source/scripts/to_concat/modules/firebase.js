@@ -10,11 +10,9 @@ const writeNewPost = (value=null, path='notes/') => {
 const cleanData = (data => Object.keys(data).map(id => ({...data[id], id})))
 
 // get data
-const getData = ((path="notes/") => {
-  return new Promise((resolve, reject) => {
-    firebase.database().ref(path).on("value", snapshot => snapshot ? resolve(snapshot): reject("fail"))
+const getData = (path="notes/") =>
+  new Promise((resolve, reject) => {
+    firebase.database().ref(path).on("value", snapshot => snapshot ? resolve(snapshot): reject(err))
   })
-});
-
 
 export {newPostKey, writeNewPost, cleanData, getData}

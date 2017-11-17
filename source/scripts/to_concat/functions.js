@@ -495,7 +495,7 @@ class App extends React.Component {
     }
   }
   handleReload() {
-    const url = rando() === 1 ? "notes/" : "notes/zzzz"
+    let url = rando() === 1 ? "notes/" : "notes/zzzz"
     this.setState({ loadFailed:false, loading: true })
     getData(url)
     .then(
@@ -544,11 +544,15 @@ class App extends React.Component {
     this.setState({ notesCont })
   }
   handleNoteText(val, id, ) {
-    let notes = { ...this.state }
+    let notes = [ ...this.state.notesCont ]
     writeNewPost({ text: val },`notes/${id}/`)
+
+    console.log(notes);
+    const notesAdd = notes.map((el, i) => console.log(el))
+
+
     getData(`notes/${id}/text`)
     .then(snapshot => {
-      console.log(snapshot);
       notes = notes.notesCont.map(note => note.text = (id === notes.id) ? snapshot: note.text)
       this.setState(notes)
     })
