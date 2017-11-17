@@ -51,7 +51,7 @@ var svgstore = require('gulp-svgstore'),
     svgmin = require('gulp-svgmin');
 
 //bower
-var mainBowerFiles = require('main-bower-files');
+// var mainBowerFiles = require('main-bower-files');
 
 // markdown
 var markdown = require('gulp-markdown');
@@ -77,11 +77,11 @@ var paths = {
     testing : 'test/scripts/',
     dist : 'public/scripts/'
   },
-  bower : {
-   components : 'bower_components',
-   json : 'bower.json',
-   vendor : 'source/scripts/vendor/'
-  },
+  // bower : {
+  //  components : 'bower_components',
+  //  json : 'bower.json',
+  //  vendor : 'source/scripts/vendor/'
+  // },
   styles : {
     input : 'source/sass/*.scss',
     exclude : '!source/sass/partials/*scss',
@@ -125,11 +125,11 @@ var paths = {
     test:'test/siteart/',
     dist: 'public/siteart/'
   },
-  bowerCSS: {
-    bourbon: 'bower_components/bourbon/app/assets/stylesheets/**/*',
-    bitters: 'bower_components/bitters/core/*.scss',
-    css: 'source/sass/vendor/'
-  }
+  // bowerCSS: {
+  //   bourbon: 'bower_components/bourbon/app/assets/stylesheets/**/*',
+  //   bitters: 'bower_components/bitters/core/*.scss',
+  //   css: 'source/sass/vendor/'
+  // }
 };
 
 // tasks
@@ -279,15 +279,15 @@ gulp.task('svg', function () {
         }))
         .pipe(gulp.dest(paths.svg.output));
 });
-gulp.task('bitters', function () {
-    return gulp.src(paths.bowerCSS.bitters)
-        .pipe(gulp.dest(paths.bowerCSS.css));
-});
-
-gulp.task('bourbon', function() {
-  return gulp.src(paths.bowerCSS.bourbon)
-    .pipe(gulp.dest(paths.bowerCSS.css));
-});
+// gulp.task('bitters', function () {
+//     return gulp.src(paths.bowerCSS.bitters)
+//         .pipe(gulp.dest(paths.bowerCSS.css));
+// });
+//
+// gulp.task('bourbon', function() {
+//   return gulp.src(paths.bowerCSS.bourbon)
+//     .pipe(gulp.dest(paths.bowerCSS.css));
+// });
 
 // converts fonts css into styles with Base 64 fonts embedded
 gulp.task('fonts', function () {
@@ -308,15 +308,15 @@ gulp.task('markdown', function () {
         .pipe(gulp.dest(paths.markdown.output));
 });
 // moves bower dependencies to vendor folder
-gulp.task('bower', function() {
-   return gulp.src(mainBowerFiles({
-    paths: {
-        bowerDirectory: paths.bower.components,
-        bowerJson: paths.bower.json
-    }
-}))
-    .pipe(gulp.dest(paths.bower.vendor))
-});
+// gulp.task('bower', function() {
+//    return gulp.src(mainBowerFiles({
+//     paths: {
+//         bowerDirectory: paths.bower.components,
+//         bowerJson: paths.bower.json
+//     }
+// }))
+//     .pipe(gulp.dest(paths.bower.vendor))
+// });
 // copies conents of the src siteart folder
 gulp.task('siteart', function() {
   return gulp.src(paths.siteart.input)
@@ -407,8 +407,8 @@ gulp.task('listen', function () {
 });
 
 gulp.task('prebuild', [
-	'bourbon',
-	'bitters',
+	// 'bourbon',
+	// 'bitters',
   'svg',
   'markdown'
 ]);
@@ -418,7 +418,7 @@ gulp.task('default', [
 	'templates',
 	'css',
 	'svg',
-	'bower',
+	// 'bower',
   'lint',
   'siteart',
   // 'concat',
