@@ -4,644 +4,116 @@ import React, { Component } from "../../../node_modules/react"
 import ReactDOM from "../../../node_modules/react-dom"
 import { Children, PropTypes } from 'react'
 
-import { newPostKey, writeNewPost, cleanData, getData } from "./modules/firebase";
+const value = ["foo", "bar", "foobar"]
+const valueToo = ["oof", "rab", "raboof"]
+
+const fooBar = [
+  {
+    name:"one",
+    id:"wall-one",
+    active:false
+  },
+  {
+    name:"two",
+    id:"wall-two",
+    active:false
+  }
+]
+
+const gameSpeed = [{wallspeed: 3}]
+
+console.log("foobar", fooBar);
+
 
 const app = document.querySelector("#app")
-const database = firebase.database()
-
-
-let notesCont = []
-let namesList = notesCont.map(note => note.assigned)
-
-namesList = namesList.filter((elem, index, self) => index == self.indexOf(elem))
-namesList.push("Unassigned")
-
-
-const editStates = []
-
 const rando = () => Math.floor((Math.random() * 4) + 1);
 
-const Loader = () =>
-  <div className="loader active">
-    <h1>Loading</h1>
-  </div>
 
-  const Failed = ({ action = f => f }) => {
-  let _select
-  const submit = (e) => {
-    e.preventDefault()
-    action()
-  }
-  return (
-    <div className="loader active failed">
-      <h1
-        onClick={submit}
-      >
-        Failed</h1>
-    </div>
-  )}
-
-const Assigned = ({ action = f => f, text = "", list = [], id }) => {
-  let _select
-  const submit = (e) => {
-    e.preventDefault()
-    action(_select.value, id)
-  }
-  return (
-    <div className="hidden">
-      <p>Select list</p>
-      <select
-        id="myList"
-        value={text}
-        ref={select => _select = select}
-        onChange={submit}
-      >
-        { list.map((el, i) => <Select item={el} key={i} />) }
-      </select>
-    </div>
-  )
-}
-Assigned.propTypes = {
-  action: React.PropTypes.func,
-  text: React.PropTypes.string,
-  list: React.PropTypes.array,
-  id: React.PropTypes.string,
-}
-
-Assigned.defaultProps = {
-  action: f => f,
-  text: "",
-  list: [],
-  id: "",
-};
-
-const Select = ({ item }) =>
-  <option>{item}</option>
-
-Select.propTypes = {
-  item: React.PropTypes.string,
-}
-Select.defaultProps = {
-  item: "",
-}
-
-const ListItem = ({ action, text, id }) => {
-  let _listItem
-  const listSelect = () => {
-    action(text, id)
-  }
-  return (
-    <li
-      onClick={listSelect}
-    >
-      {text}
-    </li>
-  )
-}
-
-ListItem.propTypes = {
-  action: React.PropTypes.func,
-  text: React.PropTypes.string,
-  id: React.PropTypes.string,
-}
-
-ListItem.defaultProps = {
-  action: f => f,
-  text: "",
-  id: "",
-}
-
-const SelectDropdown = ({ action = f => f, text = "", list = [], id = "" }) =>
-  <div className="select">
-    <p>Assigned to</p>
-    <ul aria-hidden="true">
-      <li className="selector"> {list.map(name => name === text ? name : false)}
-        <ul>
-          {list.map((name, i) =>
-            name !== text ? <ListItem action={action} id={id} text={name} key={i} /> : false)}
-          </ul>
-        </li>
-    </ul>
-  </div>
-
-SelectDropdown.propTypes = {
-  action: React.PropTypes.func,
-  text: React.PropTypes.string,
-  list: React.PropTypes.array,
-  id: React.PropTypes.string,
-}
-SelectDropdown.defaultProps = {
-  action: f => f,
-  text: "",
-  list: [],
-  id: "",
-}
-
-const Checkbox = ({ checked = "false", checkChange = f => f, id = "" }) => {
-  const submit = () => checkChange(id)
-  return (
-    <form>
-      <input
-        type="checkbox"
-        defaultChecked={checked}
-        onChange={submit}
-        id={`check${id}`}
-      />
-      <label htmlFor={`check${id}`} >Done</label>
-    </form>
-  )
-}
-Checkbox.propTypes = {
-  checked: React.PropTypes.bool,
-  checkChange: React.PropTypes.func,
-  id: React.PropTypes.string,
-}
-Checkbox.defaultProps = {
-  checked: false,
-  checkChange: f => f,
-  id: "",
-}
-
-const ColorPicker = ({ colors, id, selectColor }) =>
-  <div className="notes-color-picker">
-    <div className="notes-picker-icn" >
-      <svg className="icn-color" >
-        <use xlinkHref="#crayons" / >
-      </svg>
-      <div className="notes-colors" > {
-        colors.map((color, i) =>
-          <ColorSwatch
-            color={ color.name }
-            id = { id }
-            selectColor = { selectColor }
-            key = { i }
-          />
-        ) }
-      </div>
-    </div>
-  </div>
-
-  ColorPicker.propTypes = {
-    colors: React.PropTypes.array,
-    selectColor: React.PropTypes.func,
-    id: React.PropTypes.string,
-  }
-
-  const ColorSwatch = ({ color, id, selectColor }) => {
-    let _radio
-    const submit = (e => selectColor(id, color))
-      return (
-        <div>
-          <input id={`${id}${color}`}
-            className={color, "color"}
-            name={`clrs-${id}`}
-            type="radio"
-            value={color}
-            ref={input => _radio = input}
-            onChange={submit}
-          />
-          <label
-              htmlFor={`${id}${color}`}
-              className={color}
-            >
-              {color}
-          </label>
-        </div>
-    )
-}
-ColorSwatch.propTypes = {
-  color: React.PropTypes.string,
-  selectColor: React.PropTypes.func,
-  id: React.PropTypes.string,
-}
-
-const NoteText = ({ toggle = "false", noteInput = f => f, editHistory = f => f, note = {} }) => {
-  const editMode = note.editMode || false
-  let _textArea
-  const submit = () => {
-    noteInput(_textArea.innerText, note.id)
-    editHistory(_textArea.innerText, note.id)
-    toggle(!editMode, note.id)
-  }
-const textDisplay = () => {
-  _textArea.focus()
-  if (!editMode) {
-    toggle(!editMode, note.id)
-  }
-}
-  return (
-    <div
-      contentEditable={editMode}
-      className="note-editable"
-      ref={input => _textArea = input}
-      onBlur={submit}
-      onClick={textDisplay}
-      placeholder="Enter note text ..."
-    >
-      {note.text}
-    </div>
-  )
-}
-
-NoteText.propTypes = {
-  toggle: React.PropTypes.func,
-  noteInput: React.PropTypes.func,
-  editHistory: React.PropTypes.func,
-  note: React.PropTypes.object,
-}
-
-const Button = ({ action = f => f, id = "", label = "" }) => {
-  let _btn
-  const submit = e => {
-    e.preventDefault()
-    action(id)
- }
-  return (
-    <div>
-      <button
-        type="submit"
-        onClick={submit}
-        ref={input => _btn=input}
-      >
-        {label}
-      </button>
-    </div>
-  )
-}
-Button.propTypes = {
-  action: React.PropTypes.func,
-  id: React.PropTypes.string,
-  label: React.PropTypes.string,
-}
-
-const CloseButton = ({ action, id }) => {
-  let _btn
-  const submit = (e) => {
-    e.preventDefault()
-    action(id)
- }
-  return (
-    <svg
-      className="note-close-btn"
-      aria-hidden="true"
-      onClick={submit}
-      ref={input => _btn=input}
-    >
-      <use xlinkHref='#close_icon' />
-    </svg>
-  )
-}
-CloseButton.propTypes = {
-  action: React.PropTypes.func,
-  id: React.PropTypes.string,
-}
-
-const RevertButton = ({ action, id }) => {
-  let _btn
-  const submit = e => {
-    e.preventDefault()
-    action(id)
-  }
-  return (
-    <svg
-      className="note-revert-btn"
-      aria-hidden="true"
-      onClick={submit}
-      ref={input => _btn = input}
-    >
-      <use xlinkHref="#video-control-previous" />
-    </svg>
-  )
-}
-
-RevertButton.propTypes = {
-  action: React.PropTypes.func,
-  id: React.PropTypes.string,
-}
-
-const RestoreButton = ({ action, id }) => {
-  let _btn
-  const submit = ((e) => {
-    e.preventDefault()
-    action(id)
- })
-  return (
-    <svg
-      className="note-revert-btn"
-      aria-hidden="true"
-      onClick={submit}
-      ref = {input => _btn=input}
-    >
-      <use xlinkHref="#video-control-next" />
-    </svg>
-  )
-}
-
-RestoreButton.propTypes = {
-  action: React.PropTypes.func,
-  id: React.PropTypes.string,
-}
-
-
-const NoteHeader = ({action, id}) =>
-<header
-  className="note-header">
-    <CloseButton
-      action={action}
-      id={id}
-  />
-</header>
-
-const NoteContent = ({noteInput, editHistory, toggle, note }) =>
-<div
-  className="note-content">
-    <NoteText
-      noteInput={noteInput}
-      editHistory={editHistory}
-      toggle={toggle}
-      note={note}
-    />
-</div>
-
-const NoteFooter = ({colors, id, selectColor, action, label, checked, checkChange, text, list, dropAction}) =>
-<footer
-  className="note-footer">
-    <ColorPicker
-      colors={ colors }
-      id={ id }
-      selectColor={ selectColor }
-    />
-  <div>
-    <RevertButton
-      action={ action }
-      id={ id }
-      label={ label }
-    />
-    <RestoreButton
-      action={ action }
-      id={ id }
-      label={ label }
-    />
-  </div>
-  <div
-    className="notes-status">
-    <Checkbox
-      checked={ checked }
-      checkChange={ checkChange }
-    />
-    <SelectDropdown
-      text={ text }
-      list={ list }
-      id={ id }
-      action={ dropAction }
-    />
-    <Assigned
-      text={ text }
-      list={ list }
-      id={ id }
-      action={ dropAction }
-    />
-  </div>
-</footer>
-
-
-const NewNote = ({ handleNewNote }) => {
-  let _note
-  const submit = () => handleNewNote()
+const NewNote = ({val, clickAction, clickActionToo, speed}) => {
+  console.log("val", val);
   return (
     <div
       className="note"
-      ref={input => _note=input}
-      onClick={submit}
     >
-      <p> new note </p>
+      {val.map((el, i) => <Wall wallVal={el} key={i} speed={speed} />)}
+      <Button action={clickAction} />
+      <Button action={clickActionToo} />
+
     </div>
   )
 }
-NewNote.propTypes = {
-  handleNewNote: React.PropTypes.func,
+
+
+const Wall = ({wallVal, speed}) => {
+  // let foo = speed[0].wallspeed
+  // console.log("speed", foo);
+
+  const styles = {
+  	animationDuration:`${speed[0].wallspeed}s`,
+  }
+
+  console.log("styles", styles);
+
+  return (
+    <div
+      className = {wallVal.active? "test-wall active": "test-wall"}
+      style = {styles}
+    >
+    </div>
+  )
 }
 
-class NoteToo extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return (
-      <article
-        className={`note ${this.props.singleNote.color}`}
-        id={`note-${this.props.singleNote.id}`}
-      >
-        <NoteHeader
-          action={this.props.handleNoteRemove}
-          id={this.props.singleNote.id}
-        />
-        <NoteContent
-          noteInput={this.props.noteInput}
-          editHistory={this.props.editHistory}
-          toggle={this.props.handleEditToggle}
-          note={this.props.singleNote}
-        />
-        <NoteFooter
-          colors={this.props.colors}
-          id={this.props.singleNote.id}
-          selectColor={this.props.handleColorPicker}
-          action={this.props.handleRevert}
-          label={"Revert"}
-          checked={this.props.singleNote.done}
-          checkChange={this.props.checkChange}
-          text={this.props.singleNote.assigned}
-          list={this.props.namesList}
-          dropAction = {this.props.handleAssigned}
-        />
-      </article>
-    )
-  }
-}
 
+const Button = ({action}) => {
+  const clicky = () => {
+    action("wall-one")
+  }
+  return (
+    <button
+      className="btn"
+      value="button"
+      onClick={clicky}
+    >button</button>
+  )
+}
 
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { notesCont, editStates, loading: false, count: 0 }
-    this.handleCheck = this.handleCheck.bind(this)
-    this.handleNoteText = this.handleNoteText.bind(this)
-    this.handleEditHistory = this.handleEditHistory.bind(this)
-    this.handleRevert = this.handleRevert.bind(this)
-    this.handleAssigned = this.handleAssigned.bind(this)
-    this.handleEditToggle = this.handleEditToggle.bind(this)
-    this.handleNoteRemove = this.handleNoteRemove.bind(this)
-    this.handleNewNote = this.handleNewNote.bind(this)
-    this.handleColorPicker = this.handleColorPicker.bind(this)
-    this.handleReload = this.handleReload.bind(this)
+    this.state = { fooBar, gameSpeed }
+    this.buttonClick = this.buttonClick.bind(this)
+    this.buttonClickToo = this.buttonClickToo.bind(this)
   }
   componentWillMount() {
-    this.setState({ loadFailed:false, loading: true })
-    getData()
-    .then(
-      data => cleanData(data.val())
-    )
-    .then(notesCont => {
-      this.setState({ notesCont, loading:false, loadFailed:false })
-    }).catch(
-      err => this.handleLoadFail(err)
-    )
   }
   componentDidMount() {
   }
-  handleLoadFail(err=false) {
-    if (err) {
-      this.setState({ loadFailed:true, loading:false })
-    }
+  buttonClick(val) {
+    const foo = this.findActiveWall(val)
+    let barBar = { ...this.state }
+    barBar.fooBar[foo].active = !barBar.fooBar[foo].active
+    this.setState({barBar})
   }
-  handleReload() {
-    let url = rando() === 1 ? "notes/" : "notes/zzzz"
-    this.setState({ loadFailed:false, loading: true })
-    getData(url)
-    .then(
-      data => cleanData(data.val())
-    )
-    .then(notesCont => {
-      this.setState({ notesCont, loading:false, loadFailed:false })
-    }).catch(
-      err => this.handleLoadFail(err)
-    )
+  buttonClickToo(val) {
+    let barBar = { ...this.state }
+    console.log("c2", barBar.gameSpeed[0].wallspeed)
+    barBar.gameSpeed[0].wallspeed = barBar.gameSpeed[0].wallspeed - .5
+    this.setState({barBar})
   }
-  handleNewNote() {
-    const notes = { ...this.state }
-    const newNote = { text: "this is a new note", assigned: "Unassigned", done: false, editMode: true, checked: false }
+  findActiveWall(val) {
+    const r = this.state.fooBar;
+    return r.findIndex((el) => val === el.id)
+  }
 
-    const key = newPostKey(database);
-    writeNewPost(newNote, `notes/${key}`)
-
-    getData(`notes/${key}`).then(snapshot => {
-      let notesCont = snapshot
-      notesCont.id = key;
-      notes.notesCont.push(newNote)
-      this.setState(notes)
-    })
-  }
-  handleNoteRemove(id) {
-    let notes = { ...this.state }
-    let toRemove
-    notes.notesCont = notes.notesCont.filter(note => id !== note.id)
-    this.setState(notes)
-  }
-  handleCheck(id) {
-  let notes = { ...this.state }
-    notes = notes.notesCont.map((note, i) => {
-      note.done = (id === note.id) ? !note.done : note.done
-    })
-    this.setState(notes)
-  }
-  handleColorPicker(id, value) {
-    let notesCont = [...this.state.notesCont]
-    notesCont
-      .filter(note => id === note.id)
-      .map((note, i) => {
-        note.color = value
-    })
-    this.setState({ notesCont })
-  }
-  handleNoteText(val, id, ) {
-    let notes = [ ...this.state.notesCont ]
-    writeNewPost({ text: val },`notes/${id}/`)
-
-    console.log(notes);
-    const notesAdd = notes.map((el, i) => console.log(el))
-
-
-    getData(`notes/${id}/text`)
-    .then(snapshot => {
-      notes = notes.notesCont.map(note => note.text = (id === notes.id) ? snapshot: note.text)
-      this.setState(notes)
-    })
-  }
-  handleEditToggle(val, id) {
-    let notes = { ...this.state }
-    notes = notes.notesCont.map(note => {
-      if (id === note.id) {
-        note.editMode = val
-      }
-    })
-    this.setState(notes)
-  }
-  handleEditHistory(val, id) {
-    const editsList = { ...this.state }
-    let i
-    editsList.editStates.some((el, indx) => {
-      i = (el.id === id) ? indx : false
-      return typeof i === "number"
-    })
-    if (i && typeof i === "number") {
-      editsList.editStates[i].edits.push(val)
-    } else {
-      const myObject = { id: id, edits: [val] }
-      editsList.editStates.push(myObject)
-    }
-    this.setState(editsList)
-  }
-  handleAssigned(val, id) {
-    let notes = { ...this.state }
-    notes = notes.notesCont.map(note => note.assigned = (id === note.id) ? val : note.assigned)
-    this.setState(notes)
-  }
-  handleRevert(id) {
-    const editsList = { ...this.state }
-    // i=which one matches -- index of false
-    // l=length of edit chain -- length or false
-    let i = false
-    let l = false
-    editsList.notesCont.some((el, indx) => {
-      if (el.id === id) {
-        i = indx
-        l = editsList.notesCont[indx].edits.length - 1
-      }
-      return el.id === id
-    })
-    // get entry that will be changed
-    let e
-    editsList.notesCont.some((el, indx) => {
-      if (el.id === id) {
-        e = indx
-      }
-      return el.id === id
-    })
-    if (typeof (i) === "number" && l > 1) {
-      const currIncr = editsList.notesCont[i].increment || false
-      const incr = (currIncr) ? currIncr - 1 : l - 1
-      editsList.notesCont[i].increment = incr
-      editsList.notesCont[e].text = editsList.notesCont[i].edits[incr]
-    }
-    this.setState(editsList)
-  }
   render() {
   const notes = this.state
     return (
-      this.state.loading && !this.state.loadFailed ? <Loader /> :
-      this.state.loadFailed ? <Failed
-        action = {this.handleReload}
-      /> :
-      <div className={this.state.loading? "notes-app": "notes-app active"}>
-      {notes.notesCont.map((el, i) => (
-          <NoteToo
-            singleNote={el}
-            namesList={namesList}
-            colors={colors}
-            checkChange={this.handleCheck}
-            noteInput={this.handleNoteText}
-            editHistory={this.handleEditHistory}
-            handleRevert={this.handleRevert}
-            handleAssigned={this.handleAssigned}
-            handleEditToggle={this.handleEditToggle}
-            handleNoteRemove={this.handleNoteRemove}
-            handleColorPicker={this.handleColorPicker}
-            key={i}
-            handleMount={this.handleMount}
-          />)
-      )}
-        <NewNote handleNewNote={this.handleNewNote} />
-      </div>
+        <NewNote
+          val = {this.state.fooBar}
+          clickAction = {this.buttonClick}
+          clickActionToo = {this.buttonClickToo}
+          speed = {this.state.gameSpeed}
+        />
     )
   }
 }
