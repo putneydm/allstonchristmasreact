@@ -11,12 +11,16 @@ const fooBar = [
   {
     name:"one",
     id:"wall-one",
-    active:false
+    active:false,
+    wallStyle: 1,
+    width: 100,
   },
   {
     name:"two",
     id:"wall-two",
-    active:false
+    active:false,
+    wallStyle: 2,
+    width: 80,
   }
 ]
 
