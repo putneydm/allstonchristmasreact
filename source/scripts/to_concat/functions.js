@@ -57,6 +57,7 @@ const Wall = ({wallVal, speed}) => {
     <div
       className = {wallVal.active? "test-wall active": "test-wall"}
       style = {styles}
+      id = {wallVal.id}
     >
     </div>
   )
@@ -82,13 +83,13 @@ class App extends React.Component {
     this.state = { fooBar, gameSpeed }
     this.buttonClick = this.buttonClick.bind(this)
     this.buttonClickToo = this.buttonClickToo.bind(this)
+    this.buttonClickThree = this.buttonClickThree.bind(this)
   }
   componentWillMount() {
   }
   componentDidMount() {
   }
   buttonClick(val) {
-    console.log(this._rando(2, 7));
     let barBar = { ...this.state }
     const width = this._rando(50, 120)
     const background = this._rando(1,3)
