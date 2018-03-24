@@ -50,6 +50,8 @@ const Wall = ({wallVal, speed}) => {
 
   const styles = {
   	animationDuration:`${speed[0].wallspeed}s`,
+    width:`${wallVal.width}px`,
+    backgroundImage: `url(/siteart/brick_tiles_${wallVal.wallStyle}.svg)`
   }
 
   console.log("styles", styles);
