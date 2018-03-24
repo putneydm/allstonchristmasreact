@@ -104,7 +104,14 @@ class App extends React.Component {
     const r = this.state.fooBar;
     return r.findIndex((el) => val === el.id)
   }
-
+  _resetAsset(val, stateVal, width, background) {
+    console.log(stateVal);
+    const foo = this._findActiveWall(val, stateVal)
+    stateVal.fooBar[foo].wallStyle = background
+    stateVal.fooBar[foo].width = width
+    stateVal.fooBar[foo].active = !stateVal.fooBar[foo].active
+    return stateVal
+  }
   _rando(min, max) {
      return Math.floor(Math.random()*(max-min+1)+min);
   }
