@@ -97,7 +97,8 @@ class App extends React.Component {
   }
   buttonClickToo(val) {
     let barBar = { ...this.state }
-    barBar.gameSpeed[0].wallspeed = barBar.gameSpeed[0].wallspeed - .5
+    this._positionListener("#wall-one", true)
+    // barBar.gameSpeed[0].wallspeed = barBar.gameSpeed[0].wallspeed - .5
     this.setState({barBar})
   }
   _findActiveWall(val) {
