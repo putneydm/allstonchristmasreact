@@ -26,7 +26,6 @@ const fooBar = [
 
 const gameSpeed = [{wallspeed: 3}]
 
-console.log("foobar", fooBar);
 
 
 const app = document.querySelector("#app")
@@ -34,7 +33,6 @@ const rando = () => Math.floor((Math.random() * 4) + 1);
 
 
 const NewNote = ({val, clickAction, clickActionToo, speed}) => {
-  console.log("val", val);
   return (
     <div
       className="note"
@@ -42,24 +40,19 @@ const NewNote = ({val, clickAction, clickActionToo, speed}) => {
       {val.map((el, i) => <Wall wallVal={el} key={i} speed={speed} />)}
       <Button action={clickAction} />
       <Button action={clickActionToo} />
-
     </div>
   )
 }
 
 
 const Wall = ({wallVal, speed}) => {
-  // let foo = speed[0].wallspeed
-  // console.log("speed", foo);
+  console.log("speed", `/siteart/brick_tiles_${wallVal.wallStyle}.svg`);
 
   const styles = {
   	animationDuration:`${speed[0].wallspeed}s`,
     width:`${wallVal.width}px`,
     backgroundImage: `url(/siteart/brick_tiles_${wallVal.wallStyle}.svg)`
   }
-
-  console.log("styles", styles);
-
   return (
     <div
       className = {wallVal.active? "test-wall active": "test-wall"}
@@ -79,7 +72,7 @@ const Button = ({action}) => {
       className="btn"
       value="button"
       onClick={clicky}
-    >button</button>
+    >button x</button>
   )
 }
 
