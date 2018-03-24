@@ -89,18 +89,19 @@ class App extends React.Component {
   componentDidMount() {
   }
   buttonClick(val) {
-    const foo = this.findActiveWall(val)
+    console.log(this._rando(2, 7));
     let barBar = { ...this.state }
-    barBar.fooBar[foo].active = !barBar.fooBar[foo].active
-    this.setState({barBar})
+    const width = this._rando(50, 120)
+    const background = this._rando(1,3)
+    const foo = this._resetAsset(val, barBar, width, background)
+    this.setState({foo})
   }
   buttonClickToo(val) {
     let barBar = { ...this.state }
-    console.log("c2", barBar.gameSpeed[0].wallspeed)
     barBar.gameSpeed[0].wallspeed = barBar.gameSpeed[0].wallspeed - .5
     this.setState({barBar})
   }
-  findActiveWall(val) {
+  _findActiveWall(val) {
     const r = this.state.fooBar;
     return r.findIndex((el) => val === el.id)
   }
