@@ -115,6 +115,16 @@ class App extends React.Component {
   _rando(min, max) {
      return Math.floor(Math.random()*(max-min+1)+min);
   }
+  _positionListener(el, active) {
+    const wall = document.querySelector(el)
+    if (active) {
+      const interval = setInterval(function(){
+        console.log("wall", wall.getBoundingClientRect().left)
+      }, 30)
+    } else if (!active && interval) {
+      clearInterval(interval)
+    }
+  }
   render() {
   const notes = this.state
     return (
