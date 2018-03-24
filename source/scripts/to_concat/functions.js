@@ -105,6 +105,9 @@ class App extends React.Component {
     return r.findIndex((el) => val === el.id)
   }
 
+  _rando(min, max) {
+     return Math.floor(Math.random()*(max-min+1)+min);
+  }
   render() {
   const notes = this.state
     return (
