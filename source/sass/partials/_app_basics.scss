@@ -66,12 +66,13 @@ $note-default: #FFFFE0;
   position: absolute;
   right:-10vw;
   border:1px solid blue;
+  background-repeat: repeat;
 }
 .test-wall.active {
   transform: translateX(0);
   animation-name: fontbulger;
-  // animation-duration: 3s;
   border:1px solid red;
+  animation-timing-function: linear;
 }
 @keyframes fontbulger {
   0% {
