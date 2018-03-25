@@ -145,6 +145,32 @@ class App extends React.Component {
     // barBar.gameSpeed[0].wallspeed = barBar.gameSpeed[0].wallspeed - .5
     this.setState({barBar})
   }
+  buttonClickThree(dir) {
+
+    console.log('dir', dir);
+
+    const container = document.querySelector("#app").offsetHeight / 2
+    const player = document.querySelector(".player").offsetHeight / 2
+
+    const bottomBound = (container - player)
+    const topBound = -Math.abs(container - player)
+
+
+
+    let barBar = { ...this.state }
+
+    const inc = barBar.playerPos[0].turbo? 30: 10
+
+    let val = barBar.playerPos[0].position
+    val = dir ? val+inc: val-inc
+    val = !dir && val < topBound ? topBound: val
+
+    val = dir && val > bottomBound ? bottomBound: val
+
+    // val = dir && val < topBound? val-15: topBound
+    barBar.playerPos[0].position = val
+    this.setState({barBar})
+  }
   _findActiveWall(val) {
     const r = this.state.fooBar;
     return r.findIndex((el) => val === el.id)
