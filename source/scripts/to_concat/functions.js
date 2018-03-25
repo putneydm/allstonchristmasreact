@@ -44,6 +44,20 @@ const NewNote = ({val, clickAction, clickActionToo, speed}) => {
   )
 }
 
+const Player = (playerPos) => {
+  console.log("pos x", playerPos.position[0].position)
+  const test = 10
+  const styles = {
+      border:"1px solid red",
+      transform: `translate(0px, ${playerPos.position[0].position}px)`
+   }
+  return (
+    <div
+      className = "player"
+     // className = {playerPos.position[0].ani? "player ani": "player"}
+      style = {styles}
+    ></div>
+  )
 
 const Wall = ({wallVal, speed}) => {
   console.log("speed", `/siteart/brick_tiles_${wallVal.wallStyle}.svg`);
