@@ -38,6 +38,9 @@ const NewNote = ({val, clickAction, clickActionToo, speed}) => {
     <div
       className="note"
     >
+      <Player
+        position = {playerPos}
+      />
       {val.map((el, i) => <Wall wallVal={el} key={i} speed={speed} />)}
       <Button action={clickAction} />
       <Button action={clickActionToo} />
