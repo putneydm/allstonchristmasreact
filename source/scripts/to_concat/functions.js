@@ -185,6 +185,11 @@ class App extends React.Component {
     barBar.playerPos[0].position = val
     this.setState({barBar})
   }
+  handleTurbo(val) {
+    console.log("turbo", val);
+      let barBar = { ...this.state }
+      barBar.playerPos[0].turbo = val
+      this.setState({barBar})
   _findActiveWall(val) {
     const r = this.state.fooBar;
     return r.findIndex((el) => val === el.id)
