@@ -4,9 +4,6 @@ import React, { Component } from "../../../node_modules/react"
 import ReactDOM from "../../../node_modules/react-dom"
 import { Children, PropTypes } from 'react'
 
-const value = ["foo", "bar", "foobar"]
-const valueToo = ["oof", "rab", "raboof"]
-
 const fooBar = [
   {
     name:"one",
@@ -33,7 +30,7 @@ const app = document.querySelector("#app")
 const rando = () => Math.floor((Math.random() * 4) + 1);
 
 
-const NewNote = ({val, clickAction, clickActionToo, speed}) => {
+const NewNote = ({val, clickAction, clickActionToo, clickActionThree, speed, playerPos, turbo}) => {
   return (
     <div
       className="note"
@@ -65,9 +62,10 @@ const Player = (playerPos) => {
     ></div>
   )
 
-const Wall = ({wallVal, speed}) => {
-  console.log("speed", `/siteart/brick_tiles_${wallVal.wallStyle}.svg`);
 
+}
+
+const Wall = ({wallVal, speed}) => {
   const styles = {
   	animationDuration:`${speed[0].wallspeed}s`,
     width:`${wallVal.width}px`,
@@ -86,7 +84,7 @@ const Wall = ({wallVal, speed}) => {
 
 const Button = ({action}) => {
   const clicky = () => {
-    action("wall-one")
+    action(false)
   }
   return (
     <button
@@ -143,12 +141,14 @@ const ButtonTurbo = ({action}) => {
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { fooBar, gameSpeed }
+    this.state = { fooBar, gameSpeed, playerPos }
     this.buttonClick = this.buttonClick.bind(this)
     this.buttonClickToo = this.buttonClickToo.bind(this)
     this.buttonClickThree = this.buttonClickThree.bind(this)
+    this.handleTurbo = this.handleTurbo.bind(this)
   }
   componentWillMount() {
+    this.handleKeys()
   }
   componentDidMount() {
   }
@@ -251,7 +251,10 @@ class App extends React.Component {
           val = {this.state.fooBar}
           clickAction = {this.buttonClick}
           clickActionToo = {this.buttonClickToo}
+          clickActionThree = {this.buttonClickThree}
           speed = {this.state.gameSpeed}
+          playerPos = {this.state.playerPos}
+          turbo = {this.handleTurbo}
         />
     )
   }
