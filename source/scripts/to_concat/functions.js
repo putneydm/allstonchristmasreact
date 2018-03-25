@@ -77,6 +77,49 @@ const Button = ({action}) => {
   )
 }
 
+const ButtonDown = ({action}) => {
+  const clicky = () => {
+    action(true)
+  }
+  return (
+    <button
+      className="btn"
+      value="button"
+      onClick={clicky}
+    >Down</button>
+  )
+}
+
+const ButtonUp = ({action}) => {
+  const clicky = () => {
+    action(false)
+  }
+  return (
+    <button
+      className="btn"
+      value="button"
+      onClick={clicky}
+    >Up</button>
+  )
+}
+
+const ButtonTurbo = ({action}) => {
+  const turboOn = () => {
+    action(true)
+  }
+  const turboOff = () => {
+    action(false)
+  }
+  return (
+    <button
+      className="btn"
+      value="button"
+      onTouchStart={turboOn}
+      onTouchEnd={turboOff}
+    >Must go faster!</button>
+  )
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props)
