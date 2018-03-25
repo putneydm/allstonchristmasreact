@@ -25,6 +25,7 @@ const fooBar = [
 ]
 
 const gameSpeed = [{wallspeed: 3}]
+const playerPos = [{position:0, turbo:false}]
 
 
 
