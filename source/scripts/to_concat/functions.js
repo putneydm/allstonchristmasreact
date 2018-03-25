@@ -43,7 +43,9 @@ const NewNote = ({val, clickAction, clickActionToo, speed}) => {
       />
       {val.map((el, i) => <Wall wallVal={el} key={i} speed={speed} />)}
       <Button action={clickAction} />
-      <Button action={clickActionToo} />
+      <ButtonUp action={clickActionThree} />
+      <ButtonDown action={clickActionThree} />
+      <ButtonTurbo action={turbo} />
     </div>
   )
 }
