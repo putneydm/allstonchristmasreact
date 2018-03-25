@@ -190,6 +190,29 @@ class App extends React.Component {
       let barBar = { ...this.state }
       barBar.playerPos[0].turbo = val
       this.setState({barBar})
+  }
+  handleKeys(val) {
+    document.addEventListener('keydown', (event) => {
+        const keyName = event.key
+        console.log('keydown event\n\n' + 'key: ' + keyName)
+        if (keyName === "ArrowUp") {
+          this.buttonClickThree(false)
+        } else if (keyName === "ArrowDown") {
+          this.buttonClickThree(true)
+        } else if (keyName === "Shift") {
+          this.handleTurbo(true)
+        }
+      })
+
+      document.addEventListener('keyup', (event) => {
+          const keyName = event.key
+          console.log('keydown event\n\n' + 'key: ' + keyName)
+          // alert('keydown event\n\n' + 'key: ' + keyName);
+         if (keyName === "Shift") {
+            this.handleTurbo(false)
+          }
+        })
+  }
   _findActiveWall(val) {
     const r = this.state.fooBar;
     return r.findIndex((el) => val === el.id)
