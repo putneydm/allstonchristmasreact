@@ -84,14 +84,14 @@ const Wall = ({wallVal, speed}) => {
 
 const Button = ({action}) => {
   const clicky = () => {
-    action(false)
+    action("wall-one")
   }
   return (
     <button
       className="btn"
       value="button"
       onClick={clicky}
-    >button x</button>
+    >Start</button>
   )
 }
 
@@ -149,6 +149,7 @@ class App extends React.Component {
   }
   componentWillMount() {
     this.handleKeys()
+
   }
   componentDidMount() {
     this.getContainerSize()
