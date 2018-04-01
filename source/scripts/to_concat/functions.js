@@ -23,8 +23,8 @@ const fooBar = [
 
 const gameSpeed = [{wallspeed: 3}]
 const playerPos = [{position:0, turbo:false}]
-
-
+const containerSize = [{width:0, height: 0}]
+const playerSize = [{width:0, height: 0}]
 
 const app = document.querySelector("#app")
 const rando = () => Math.floor((Math.random() * 4) + 1);
