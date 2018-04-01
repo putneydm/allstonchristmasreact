@@ -141,7 +141,7 @@ const ButtonTurbo = ({action}) => {
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { fooBar, gameSpeed, playerPos }
+    this.state = { fooBar, gameSpeed, playerPos, containerSize, playerSize }
     this.buttonClick = this.buttonClick.bind(this)
     this.buttonClickToo = this.buttonClickToo.bind(this)
     this.buttonClickThree = this.buttonClickThree.bind(this)
@@ -151,6 +151,7 @@ class App extends React.Component {
     this.handleKeys()
   }
   componentDidMount() {
+    this.getContainerSize()
   }
   buttonClick(val) {
     let barBar = { ...this.state }
